@@ -39,7 +39,7 @@ const CLR_HANDLE_LINE = 'var(--color-brand-wash-hover)';
 const CLR_LABEL       = 'var(--color-text-muted)';
 
 const BezierCurve: React.FC = () => {
-  const { curveValues, setCurveValues, panOffsetPx, setPanOffsetPx, snapToGrid, activeHandle, setActiveHandle, hoveredHandle, setHoveredHandle } = usePlayground();
+  const { curveValues, setCurveValues, panOffsetPx, setPanOffsetPx, snapToGrid, activeHandle, setActiveHandle, setHoveredHandle } = usePlayground();
   const resetMorph = useMorphHover();
   const snapToGridRef = useRef(snapToGrid);
   snapToGridRef.current = snapToGrid;
