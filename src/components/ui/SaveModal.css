@@ -1,0 +1,171 @@
+/* SaveModal.css */
+.save-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: modalFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+[data-theme="dark"] .save-modal-backdrop {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.save-modal {
+  width: 90%;
+  max-width: 440px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg), 0 20px 48px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: modalSlideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+[data-theme="dark"] .save-modal {
+  box-shadow: var(--shadow-lg), 0 20px 48px rgba(0, 0, 0, 0.4);
+}
+
+.save-modal__heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+  text-align: center;
+}
+
+/* Simulated 'Giant Preset' appearance */
+.save-modal__preview {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: transparent;
+  color: var(--color-text-main);
+  border-radius: 16px;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.save-modal__icon-wrap {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  padding: 10px;
+  background: var(--color-brand-wash);
+  color: var(--color-brand-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-modal__icon {
+  width: 100%;
+  height: 100%;
+}
+
+.save-modal__details {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.save-modal__input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--color-text-main);
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 0 0 4px 0;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.save-modal__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.save-modal__input:focus {
+  border-bottom-color: var(--color-brand-base);
+}
+
+.save-modal__values {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Actions */
+.save-modal__actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.save-modal__btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.save-modal__btn--cancel {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-body);
+  border-color: var(--color-border-main);
+}
+
+.save-modal__btn--cancel:hover {
+  background: var(--color-border-light);
+  color: var(--color-text-main);
+}
+
+.save-modal__btn--save {
+  background: var(--color-brand-base);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-brand-sm);
+}
+
+.save-modal__btn--save:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-brand-md);
+  filter: brightness(1.05);
+}
+
+.save-modal__btn--save:active {
+  transform: scale(0.97);
+}
+
+/* Animations */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

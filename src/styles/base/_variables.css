@@ -1,0 +1,84 @@
+/* ─────────────────────────────────────────────
+   Design Tokens  (CSS Custom Properties)
+   ───────────────────────────────────────────── */
+
+:root {
+  /* ──────────────────────────────────────────
+     Brand & Accents
+     ────────────────────────────────────────── */
+  --color-brand-base:   #f5715f; /* Primary blue used for curves, active states, main buttons */
+  --color-brand-hover:  #2a6ac0; /* Darker blue for hover states */
+  --color-brand-active: #777777; /* Deep navy blue used for morphed hover states & endpoints */
+  --color-brand-light:  #f0f6ff; /* Very pale blue used for subtle panel hovers */
+  
+  --color-brand-wash:   rgba(53, 124, 208, 0.08); /* Transparent blue for icon backgrounds */
+  --color-brand-wash-hover: rgba(53, 124, 208, 0.2);
+
+  /* ──────────────────────────────────────────
+     Neutrals & Framework
+     ────────────────────────────────────────── */
+  /* Backgrounds */
+  --color-bg-base:      #ffffff;
+  --color-bg-subtle:    #edeff0; /* Very light grey for top controls hover */
+  --color-bg-inset:     #EEF5FC; /* Light blue-grey for duration inputs */
+
+  /* Text & Content */
+  --color-text-main:    #4b5466; /* Darkest text (headings, active names) */
+  --color-text-body:    #2e2e2e; /* Standard text */
+  --color-text-input:   #505050; /* Input value text */
+  --color-text-muted:   #aaaaaa; /* Labels, titles, placeholders */
+  --color-text-inverse: #ffffff; /* Text on brand backgrounds */
+
+  /* Borders & Dividers */
+  --color-border-main:  #e2e2ee;    /* Primary borders (panels) */
+  --color-border-light: #f0f0f8;    /* Lighter internal separators */
+  --color-border-dark:  #b0b9ca;    /* Slightly darker separators (curve values) */
+
+  /* ──────────────────────────────────────────
+     Typography
+     ────────────────────────────────────────── */
+  --font-sans:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:   'Fira Code', 'Cascadia Code', monospace;
+
+  /* ──────────────────────────────────────────
+     Shadows
+     ────────────────────────────────────────── */
+  --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-md:      0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.12);
+  
+  --shadow-brand-sm: 0 4px 12px rgba(53, 124, 208, 0.15);
+  --shadow-brand-md: 0 6px 16px rgba(53, 124, 208, 0.3);
+  --shadow-brand-lg: 0 10px 36px rgba(53, 124, 208, 0.45);
+}
+
+/* ──────────────────────────────────────────
+   Dark Theme Overrides
+   ────────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Backgrounds */
+  --color-bg-base:      #1c1e24; /* Very dark slate, almost black */
+  --color-bg-subtle:    #16191f; /* Slightly lighter surface */
+  --color-bg-inset:     #1a1d24; /* Deeper inset background */
+
+  /* Text & Content */
+  --color-text-main:    #f0f2f5; /* Off-white for highest contrast */
+  --color-text-body:    #d1d5db; /* Light gray for standard reading */
+  --color-text-input:   #e5e7eb; /* Editable text */
+  --color-text-muted:   #8a94a6; /* Subdued labels and placeholders */
+  --color-text-inverse: #ffffff; /* Keep white on brand backgrounds */
+
+  /* Borders & Dividers */
+  --color-border-main:  #252932; /* Subtle dark border separating panels */
+  --color-border-light: #2b2e33; /* Internal separators */
+  --color-border-dark:  #3b4252; /* Curve value separators / dot grid */
+
+  /* Shadows - Dark mode shadows need to be much darker/less transparent to show up on dark backgrounds */
+  --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md:      0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.6);
+  
+  --shadow-brand-sm: 0 4px 12px rgba(245, 113, 95, 0.15);
+  --shadow-brand-md: 0 6px 16px rgba(245, 113, 95, 0.25);
+  --shadow-brand-lg: 0 10px 36px rgba(245, 113, 95, 0.4);
+}

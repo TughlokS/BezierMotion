@@ -1,0 +1,278 @@
+
+> curvedmotion@0.0.0 lint
+> eslint .
+
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ClickRayEffect\ClickRayEffect.tsx
+  65:17  error  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BackgroundGrid.tsx
+  30:3  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BackgroundGrid.tsx:30:3
+  28 |
+  29 |   const { panOffsetPx } = usePlayground();
+> 30 |   panRef.current = panOffsetPx;
+     |   ^^^^^^^^^^^^^^ Cannot update ref during render
+  31 |
+  32 |   useEffect(() => {
+  33 |     const canvas = canvasRef.current!;  react-hooks/refs
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx
+   42:112  error    'hoveredHandle' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   45:3    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:45:3
+  43 |   const resetMorph = useMorphHover();
+  44 |   const snapToGridRef = useRef(snapToGrid);
+> 45 |   snapToGridRef.current = snapToGrid;
+     |   ^^^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  46 |
+  47 |   // Viewport size
+  48 |   const [vp, setVp] = useState({ w: window.innerWidth, h: window.innerHeight });                                                                                                                                                                                                                                                                                         react-hooks/refs
+   80:3    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:80:3
+  78 |   const originYRef      = useRef(originY);
+  79 |   const panOffsetPxRef  = useRef(panOffsetPx);
+> 80 |   curveRef.current       = curveValues;
+     |   ^^^^^^^^^^^^^^^^ Cannot update ref during render
+  81 |   originXRef.current     = originX;
+  82 |   originYRef.current     = originY;
+  83 |   panOffsetPxRef.current = panOffsetPx;                                                                                                                                                                                                                                                                        react-hooks/refs
+   81:3    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:81:3
+  79 |   const panOffsetPxRef  = useRef(panOffsetPx);
+  80 |   curveRef.current       = curveValues;
+> 81 |   originXRef.current     = originX;
+     |   ^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  82 |   originYRef.current     = originY;
+  83 |   panOffsetPxRef.current = panOffsetPx;
+  84 |                                                                                                                                                                                                                                                                                                                 react-hooks/refs
+   82:3    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:82:3
+  80 |   curveRef.current       = curveValues;
+  81 |   originXRef.current     = originX;
+> 82 |   originYRef.current     = originY;
+     |   ^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  83 |   panOffsetPxRef.current = panOffsetPx;
+  84 |
+  85 |   const dragging = useRef<'p1' | 'p2' | null>(null);                                                                                                                                                                                                                                                                                                           react-hooks/refs
+   83:3    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:83:3
+  81 |   originXRef.current     = originX;
+  82 |   originYRef.current     = originY;
+> 83 |   panOffsetPxRef.current = panOffsetPx;
+     |   ^^^^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  84 |
+  85 |   const dragging = useRef<'p1' | 'p2' | null>(null);
+  86 |   const panning  = useRef(false);                                                                                                                                                                                                                                                                                                             react-hooks/refs
+   89:28   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  113:8    warning  React Hook useCallback has a missing dependency: 'setActiveHandle'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  react-hooks/exhaustive-deps
+  179:6    warning  React Hook useEffect has a missing dependency: 'setActiveHandle'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+  181:29   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:29
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"                                                                     react-hooks/refs
+  181:29   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:29
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"                                                                     react-hooks/refs
+  181:29   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:29
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"                                                                     react-hooks/refs
+  181:29   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:29
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"                          react-hooks/refs
+  181:29   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:29
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"  react-hooks/refs
+  181:58   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:181:58
+  179 |   }, [setCurveValues, setPanOffsetPx]);
+  180 |
+> 181 |   const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+      |                                                          ^^^^^^^^^^^^^^^ Cannot access ref value during render
+  182 |   const isSnapDragging = snapToGrid && activeHandle !== null;
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"                                                  react-hooks/refs
+  185:7    error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:185:7
+  183 |   const animTransition = isSnapDragging
+  184 |     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"
+> 185 |     : isInteractiveMove
+      |       ^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  186 |     ? { duration: 0 }
+  187 |     : { type: 'spring' as const, bounce: 0, duration: 0.6 };
+  188 |                                                                                                                                                                                                                                             react-hooks/refs
+  191:21   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:191:21
+  189 |   // ── Track last active handle for smooth fade-out ─────────────────
+  190 |   const lastActiveHandle = useRef<'p1' | 'p2'>('p1');
+> 191 |   if (activeHandle) lastActiveHandle.current = activeHandle;
+      |                     ^^^^^^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  192 |   const renderHandle = activeHandle || lastActiveHandle.current;
+  193 |
+  194 |   // ── SVG paths ───────────────────────────────────────────────────                                                                                                                                                      react-hooks/refs
+  192:40   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:192:40
+  190 |   const lastActiveHandle = useRef<'p1' | 'p2'>('p1');
+  191 |   if (activeHandle) lastActiveHandle.current = activeHandle;
+> 192 |   const renderHandle = activeHandle || lastActiveHandle.current;
+      |                                        ^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  193 |
+  194 |   // ── SVG paths ───────────────────────────────────────────────────
+  195 |   const curvePath   = `M ${p0.x} ${p0.y} C ${p1.x} ${p1.y}, ${p2.x} ${p2.y}, ${p3.x} ${p3.y}`;                                                                                                     react-hooks/refs
+  192:40   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:192:40
+  190 |   const lastActiveHandle = useRef<'p1' | 'p2'>('p1');
+  191 |   if (activeHandle) lastActiveHandle.current = activeHandle;
+> 192 |   const renderHandle = activeHandle || lastActiveHandle.current;
+      |                                        ^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  193 |
+  194 |   // ── SVG paths ───────────────────────────────────────────────────
+  195 |   const curvePath   = `M ${p0.x} ${p0.y} C ${p1.x} ${p1.y}, ${p2.x} ${p2.y}, ${p3.x} ${p3.y}`;                                                                                                     react-hooks/refs
+  192:40   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:192:40
+  190 |   const lastActiveHandle = useRef<'p1' | 'p2'>('p1');
+  191 |   if (activeHandle) lastActiveHandle.current = activeHandle;
+> 192 |   const renderHandle = activeHandle || lastActiveHandle.current;
+      |                                        ^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  193 |
+  194 |   // ── SVG paths ───────────────────────────────────────────────────
+  195 |   const curvePath   = `M ${p0.x} ${p0.y} C ${p1.x} ${p1.y}, ${p2.x} ${p2.y}, ${p3.x} ${p3.y}`;                                                                                                     react-hooks/refs
+  192:40   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\BezierCurve.tsx:192:40
+  190 |   const lastActiveHandle = useRef<'p1' | 'p2'>('p1');
+  191 |   if (activeHandle) lastActiveHandle.current = activeHandle;
+> 192 |   const renderHandle = activeHandle || lastActiveHandle.current;
+      |                                        ^^^^^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  193 |
+  194 |   // ── SVG paths ───────────────────────────────────────────────────
+  195 |   const curvePath   = `M ${p0.x} ${p0.y} C ${p1.x} ${p1.y}, ${p2.x} ${p2.y}, ${p3.x} ${p3.y}`;                                                                                                     react-hooks/refs
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\ThemeToggle.tsx
+  13:7  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\components\ui\ThemeToggle.tsx:13:7
+  11 |     
+  12 |     if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+> 13 |       setIsDark(true);
+     |       ^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |       document.documentElement.setAttribute('data-theme', 'dark');
+  15 |     }
+  16 |   }, []);  react-hooks/set-state-in-effect
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\hooks\useAnimationEngine.ts
+  82:3  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\hooks\useAnimationEngine.ts:82:3
+  80 |   const curveRef    = useRef(curveValues);
+  81 |   const durationRef = useRef(duration);
+> 82 |   curveRef.current    = curveValues;
+     |   ^^^^^^^^^^^^^^^^ Cannot update ref during render
+  83 |   durationRef.current = duration;
+  84 |
+  85 |   useEffect(() => {  react-hooks/refs
+  83:3  error  Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\tughl\Documents\__MainDocument__\_Code\_Web_Projects\_Serious_Projects\_React_Projects\CurvedMotion\src\hooks\useAnimationEngine.ts:83:3
+  81 |   const durationRef = useRef(duration);
+  82 |   curveRef.current    = curveValues;
+> 83 |   durationRef.current = duration;
+     |   ^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  84 |
+  85 |   useEffect(() => {
+  86 |     const tick = (now: number) => {      react-hooks/refs
+
+✖ 26 problems (24 errors, 2 warnings)
+

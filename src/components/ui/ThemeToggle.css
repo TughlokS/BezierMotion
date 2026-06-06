@@ -1,0 +1,90 @@
+/* ThemeToggle.css */
+
+/* ─── View Transitions: suppress the default cross-fade, use our clip-path ─── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Old page sits below, new page (with the circular clip) sits on top */
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* ─── Toggle button ─── */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  box-shadow: var(--shadow-md);
+  color: var(--color-text-body);
+  cursor: pointer;
+  /* z-index higher than the view-transition layer so it stays visible during animation */
+  z-index: 9999;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.theme-toggle:hover {
+  color: var(--color-brand-base);
+  transform: scale(1.05);
+}
+
+.theme-toggle:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle__svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* ─── Base Sun/Moon Core ─── */
+.theme-toggle__sun-moon {
+  transform-origin: center center;
+  transition: r 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ─── Mask circle (cuts out the moon crescent) ─── */
+.theme-toggle__mask-circle {
+  transform-origin: center center;
+  cx: 24px;
+  cy: 4px;
+  transition: cx 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), cy 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ─── Sun Rays ─── */
+.theme-toggle__sun-rays {
+  transform-origin: center center;
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* ─── Dark mode animation states ─── */
+.theme-toggle--dark .theme-toggle__sun-moon {
+  r: 9px;
+}
+
+.theme-toggle--dark .theme-toggle__mask-circle {
+  cx: 17px;
+  cy: 7px;
+}
+
+.theme-toggle--dark .theme-toggle__sun-rays {
+  opacity: 0;
+  transform: scale(0.6) rotate(45deg);
+}

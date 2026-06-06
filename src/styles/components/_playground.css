@@ -1,0 +1,895 @@
+/* ═══════════════════════════════════════════
+   Playground UI Styles
+   ═══════════════════════════════════════════ */
+
+body {
+  background-color: var(--color-bg-base);
+  color: var(--color-text-body);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+/* ── Background Grid ── */
+.background-grid {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── Bezier Curve Overlay ── */
+.bezier-curve-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none; /* individual handles re-enable via inline style */
+  overflow: visible;
+}
+
+/* When the overlay is made interactive for panning */
+.bezier-curve-overlay--pannable {
+  pointer-events: all;
+  cursor: grab;
+}
+
+.bezier-curve-overlay--pannable:active {
+  cursor: grabbing;
+}
+
+.bezier-handle {
+  pointer-events: all;
+  cursor: grab;
+  transition: r 0.1s ease;
+}
+
+.bezier-handle:hover {
+  r: 20px;
+}
+
+.bezier-value-pill {
+  pointer-events: none;
+}
+
+.bezier-value-pill__bg {
+  fill: var(--color-bg-base);
+  stroke: var(--color-border-main);
+  stroke-width: 1px;
+  rx: 13px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.bezier-value-pill__text {
+  fill: var(--color-text-input);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-main, Inter, system-ui);
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.bezier-value-pill__separator {
+  stroke: var(--color-border-dark);
+  stroke-width: 2px;
+  stroke-linecap: round;
+}
+
+body.is-dragging-handle,
+body.is-dragging-handle * {
+  cursor: none !important;
+}
+
+/* ── Pan Reset Button ── */
+.pan-reset-btn {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.85);
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  opacity: 0;
+  pointer-events: none;
+  
+  /* Morph Base Extends */
+  background-color: var(--color-bg-base); /* Base revealed on hover */
+  color: var(--color-bg-base); /* Base Text (sits on var(--color-brand-base) ::before) */
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-brand-sm);
+}
+
+.pan-reset-btn::before {
+  background-color: var(--color-brand-base); /* Base Visible */
+}
+
+.pan-reset-btn--visible {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.pan-reset-btn--visible:hover {
+  color: var(--color-brand-base);
+  border-color: var(--color-brand-base);
+  box-shadow: var(--shadow-brand-md);
+}
+
+.pan-reset-btn--visible:active {
+  transform: translate(-50%, -50%) scale(0.95);
+  box-shadow: var(--shadow-brand-sm);
+}
+
+/* ── Morphing Button Base Class ──────────────── */
+.morph-btn {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  transition:
+    color 0.3s ease-in-out,
+    border-color 0.3s cubic-bezier(0, 0.7, 0.3, 1),
+    box-shadow 0.3s ease,
+    background-color 0.3s ease,
+    opacity 0.25s ease,
+    transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.morph-btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: -1;
+  border-radius: inherit;
+  transition: all 0.3s cubic-bezier(0, 0.7, 0.3, 1);
+}
+
+.morph-btn.is-tracking::before {
+  transition:
+    width 0.3s cubic-bezier(0, 0.7, 0.3, 1),
+    height 0.3s cubic-bezier(0, 0.7, 0.3, 1),
+    border-radius 0.3s cubic-bezier(0, 0.7, 0.3, 1);
+}
+
+.morph-btn:hover {
+  cursor: none;
+}
+
+.morph-btn:hover::before {
+  height: 10px;
+  width: 10px;
+  top: calc(var(--mouse-y, 50%) - 5px);
+  left: calc(var(--mouse-x, 50%) - 5px);
+  border-radius: 25px !important;
+}
+
+/* ── Playground Container ── */
+.playground {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════
+   Navbar
+   ══════════════════════════════════════════ */
+.navbar {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-brand-base);
+  padding: 4px 6px;
+  margin-right: 4px;
+}
+
+.navbar__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.navbar__link:hover {
+  color: var(--color-text-main);
+  background: var(--color-bg-subtle);
+}
+
+.navbar__link--active {
+  color: var(--color-brand-base);
+  font-weight: 600;
+}
+
+/* ══════════════════════════════════════════
+   Top Controls
+   ══════════════════════════════════════════ */
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.top-controls__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  color: var(--color-text-body);
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.top-controls__btn:hover {
+  color: var(--color-text-main);
+  background: var(--color-bg-subtle);
+}
+
+.top-controls__btn--active {
+  color: var(--color-bg-base);
+  background: var(--color-brand-base);
+}
+
+.top-controls__btn--active:hover {
+  color: var(--color-bg-base);
+  background: var(--color-brand-base);
+}
+
+.top-controls__divider {
+  width: 1px;
+  height: 24px;
+  background: var(--color-border-main);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   Presets Panel
+   ══════════════════════════════════════════ */
+.presets-panel {
+  position: fixed;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  height: 640px;
+  width: 220px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.presets-panel__header {
+  padding: 14px 14px 10px;
+  flex-shrink: 0;
+}
+
+.presets-panel__title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+}
+
+.presets-panel__list {
+  position: relative; /* anchor for the sliding pill */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: scroll; /* always reserved – prevents layout shift on show */
+  padding: 4px 10px 4px 14px; /* 10px right + 4px scrollbar = 14px visual right gap, matching left */
+  /* Firefox – hide thumb until panel hover */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+
+/* Reveal thumb when user hovers the whole panel */
+.presets-panel:hover .presets-panel__list {
+  scrollbar-color: var(--color-text-muted) transparent;
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+.presets-panel__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.presets-panel__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.presets-panel__list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 100px;
+}
+
+.presets-panel:hover .presets-panel__list::-webkit-scrollbar-thumb {
+  background: var(--color-text-muted);
+}
+
+.presets-panel__empty {
+  padding: 24px 12px;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* Sliding active-state pill */
+.presets-panel__pill {
+  position: absolute;
+  left: 14px;
+  right: 10px;
+  border-radius: 12px;
+  background: var(--color-brand-base);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.preset-item {
+  position: relative;
+  z-index: 1; /* sit above the pill */
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  text-align: left;
+
+  background: transparent;
+  color: var(--color-text-main);
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-md);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.preset-item:hover:not(.preset-item--active) {
+  border-color: var(--color-brand-base);
+}
+
+.preset-item--active {
+  background: transparent; /* pill provides the fill */
+  color: var(--color-bg-base);
+  cursor: default;
+  border-color: transparent !important;
+}
+
+/* Mini curve SVG icon */
+.preset-icon {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  padding: 6px;
+  background: var(--color-brand-wash);
+  color: var(--color-brand-base); /* currentColor provider */
+  transition: color 0.3s ease, background 0.3s ease;
+}
+
+.preset-item--active .preset-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.85); /* overrides currentColor for active */
+}
+
+[data-theme="dark"] .preset-item--active .preset-icon {
+  background: rgba(15, 17, 21, 0.2); /* matches --color-bg-base dark mode at 20% */
+  color: rgba(15, 17, 21, 0.85);
+}
+
+/* Text group: name + values */
+.preset-item__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow: hidden;
+  /* Fixed height that can contain both name and subtext */
+  height: 36px;
+  justify-content: center;
+}
+
+.preset-item__name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* Default: vertically centered (no transform needed since parent is centered) */
+  transform: translateY(9px);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.preset-item:hover .preset-item__name,
+.preset-item--active .preset-item__name {
+  transform: translateY(0);
+}
+
+.preset-item__values {
+  font-size: 0.68rem;
+  opacity: 0;
+  font-family: var(--font-sans);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateY(4px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.preset-item:hover .preset-item__values {
+  opacity: 0.6;
+  transform: translateY(0);
+}
+
+.preset-item--active .preset-item__values {
+  opacity: 0.8;
+  transform: translateY(0);
+}
+
+.presets-panel__footer {
+  padding: 40px 12px 12px;
+  flex-shrink: 0;
+}
+
+.presets-panel__save-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 15px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  
+  /* Morph Base Extends */
+  background-color: var(--color-bg-base); /* Base revealed on hover */
+  color: var(--color-bg-base); /* Base Text (sits on var(--color-brand-base) ::before) */
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-brand-sm);
+}
+
+.presets-panel__save-btn::before {
+  background-color: var(--color-brand-base); /* Base Visible */
+}
+
+.presets-panel__save-btn:hover {
+  color: var(--color-brand-base);
+  border-color: var(--color-brand-base);
+  box-shadow: var(--shadow-brand-md);
+}
+
+.presets-panel__save-btn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-brand-sm);
+}
+
+/* ══════════════════════════════════════════
+   Right panel group
+   ══════════════════════════════════════════ */
+.right-panels {
+  position: fixed;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+
+/* ── Shared animation panel card ── */
+.anim-panel {
+  width: 230px;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  padding: 14px 14px 16px;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+/* Every child of an anim-panel inherits pointer unless explicitly overridden */
+.anim-panel,
+.anim-panel * {
+  cursor: pointer;
+}
+
+/* Duration pill (both clickable button and active input) get text cursor */
+.anim-panel .duration-pill,
+.anim-panel .duration-pill--editing {
+  cursor: text;
+}
+
+.anim-panel:hover {
+  border-color: var(--color-brand-base);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--color-brand-base);
+}
+
+.anim-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.anim-panel__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.anim-panel__icon {
+  color: #a0a0c0;
+  display: flex;
+  align-items: center;
+}
+
+.anim-panel__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Translate track ── */
+.translate-track {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  background: var(--color-border-light);
+  border-radius: 100px;
+}
+
+.translate-track__indicator {
+  position: absolute;
+  top: 3px;
+  /* --anim-translate-x is written to :root by the animation engine */
+  left: calc(3px + var(--anim-translate-x, 0) * (100% - 40px - 6px));
+  width: 40px;
+  height: 22px;
+  background: var(--color-brand-base);
+  border-radius: 100px;
+}
+
+/* ── Scale box ── */
+.scale-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--color-border-light);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow: hidden; /* circle clips here on overshoot – intentional */
+}
+
+.scale-box__circle {
+  background: var(--color-brand-base);
+  border-radius: 50%;
+  transition: width 0.12s ease-out, height 0.12s ease-out;
+  flex-shrink: 0;
+}
+
+/* ── Opacity track ── */
+.opacity-track {
+  width: 100%;
+  height: 38px;
+  background: var(--color-border-light);
+  border-radius: 100px;
+  padding: 5px;
+}
+
+.opacity-track__pill {
+  width: 100%;
+  height: 100%;
+  background: var(--color-brand-base);
+  border-radius: 100px;
+  transition: opacity 0.12s ease-out;
+}
+
+/* ══════════════════════════════════════════
+   Curve Values Bar
+   ══════════════════════════════════════════ */
+.curve-values-bar {
+  display: flex;
+  align-items: stretch;
+  background: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 16px;
+  padding: 6px;
+  gap: 4px;
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Vertical divider before the copy button — matches top-controls__divider */
+.curve-values-bar__divider {
+  width: 1px;
+  height: 24px;
+  align-self: center;
+  background: var(--color-border-main);
+  border-radius: 99px;
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* Copy button — matches top-controls__btn style */
+.curve-values-bar__copy-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  color: var(--color-text-body);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  perspective: 300px;
+  transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+}
+
+.curve-values-bar__copy-btn:hover {
+  color: var(--color-text-main);
+  background: var(--color-bg-subtle);
+}
+
+.curve-values-bar__copy-btn:active {
+  transform: scale(0.92);
+}
+
+.curve-values-bar__copy-btn--copied {
+  color: var(--color-brand-base);
+  background: var(--color-brand-wash);
+  animation: copyFlip 0.35s ease-out;
+}
+
+.curve-values-bar__copy-btn--copied:hover {
+  color: var(--color-brand-base);
+  background: var(--color-brand-wash);
+}
+
+/* Flip-card: starts edge-on (hiding the icon swap), then flips into view */
+@keyframes copyFlip {
+  0%   { transform: rotateY(90deg) scale(0.95); }
+  60%  { transform: rotateY(-8deg) scale(1); }
+  100% { transform: rotateY(0deg) scale(1); }
+}
+
+
+.curve-value-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  min-width: 84px;
+}
+
+/* Subtle separators between boxes – 2px thick, half-height, rounded */
+.curve-value-box + .curve-value-box::before {
+  content: '';
+  position: absolute;
+  left: -2px; /* centered on the 4px gap */
+  top: 25%;
+  height: 50%;
+  width: 2px;
+  background: var(--color-border-dark);
+  border-radius: 99px;
+}
+
+.curve-value-box__input {
+  width: 72px;
+  border: none;
+  background: transparent;
+  font-size: 1.05rem;
+  color: var(--color-text-input);
+  text-align: center;
+  font-family: inherit;
+  padding: 2px 4px;
+  border-radius: 6px;
+  cursor: text;
+  outline: none;
+  transition: color 0.15s ease, font-weight 0.15s ease;
+  /* Remove native number spinners */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.curve-value-box__input--is-dragged {
+  color: var(--color-brand-base);
+  font-weight: 700;
+}
+
+.curve-value-box__input:focus {
+  outline: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.curve-value-box__input::-webkit-outer-spin-button,
+.curve-value-box__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ══════════════════════════════════════════
+   Duration Panel
+   ══════════════════════════════════════════ */
+
+/* Editable pill – display mode (button) */
+.duration-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: var(--color-bg-inset);
+  color: var(--color-brand-base);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.duration-pill:hover,
+.duration-pill:active {
+  background: var(--color-brand-base);
+  color: var(--color-bg-base);
+  border-color: transparent;
+}
+
+.duration-pill:active {
+  transform: scale(0.95);
+}
+
+/* Editing mode – same pill shape but with a real input inside */
+.duration-pill--editing {
+  width: 62px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: var(--color-brand-base);
+  color: var(--color-text-inverse);
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: 1.5px solid transparent;
+  outline: none;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.duration-pill--editing::-webkit-outer-spin-button,
+.duration-pill--editing::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Slider wrapper */
+.duration-slider-wrap {
+  width: 100%;
+  padding: 2px 0;
+}
+
+/* Range input – custom styled */
+.duration-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 100px;
+  /* Filled portion in accent, unfilled in light gray */
+  background: linear-gradient(
+    to right,
+    var(--color-brand-base) var(--fill-pct, 0%),
+    var(--color-border-main) var(--fill-pct, 0%)
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+/* Thumb – WebKit */
+.duration-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-bg-base);
+  border: 2.5px solid var(--color-brand-base);
+  box-shadow: 0 1px 6px rgba(53, 124, 208, 0.35);
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.duration-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 2px 10px rgba(53, 124, 208, 0.5);
+  transform: scale(1.1);
+}
+
+.duration-slider:active::-webkit-slider-thumb {
+  transform: scale(1.05);
+}
+
+/* Thumb – Firefox */
+.duration-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-bg-base);
+  border: 2.5px solid var(--color-brand-base);
+  box-shadow: 0 1px 6px rgba(53, 124, 208, 0.35);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.duration-slider::-moz-range-thumb:hover {
+  box-shadow: 0 2px 10px rgba(53, 124, 208, 0.5);
+}
+
