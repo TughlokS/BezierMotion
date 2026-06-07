@@ -295,10 +295,8 @@ body.is-dragging-handle * {
    Presets Panel
    ══════════════════════════════════════════ */
 .presets-panel {
-  position: fixed;
-  top: 50%;
-  left: 16px;
-  transform: translateY(-50%);
+  /* position:fixed is now on the .draggable-panel--presets wrapper;
+     the panel itself is just a normal block inside that wrapper. */
   height: 640px;
   width: 220px;
   background: var(--color-bg-base);
@@ -309,6 +307,8 @@ body.is-dragging-handle * {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Extra top padding so content clears the drag-handle line */
+  padding-top: 8px;
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -523,17 +523,29 @@ body.is-dragging-handle * {
 }
 
 /* ══════════════════════════════════════════
-   Right panel group
+   Right panels – flex column, vertically centered.
+   Full viewport height + justify-content (NOT translateY)
+   keeps a transform off this container: a transform here would
+   become the containing block for the drag-ghost's position:fixed
+   and misplace it. pointer-events passthrough lets the gaps stay
+   click-through to the curve behind.
    ══════════════════════════════════════════ */
 .right-panels {
   position: fixed;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   right: 16px;
-  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
   z-index: 10;
+  pointer-events: none;
+}
+
+/* Panels themselves stay interactive */
+.right-panels > * {
+  pointer-events: auto;
 }
 
 /* ── Shared animation panel card ── */
@@ -543,7 +555,8 @@ body.is-dragging-handle * {
   border: 1px solid var(--color-border-main);
   border-radius: 16px;
   box-shadow: var(--shadow-lg);
-  padding: 14px 14px 16px;
+  /* Extra top padding so content clears the drag-handle line */
+  padding: 22px 14px 16px;
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
 }
