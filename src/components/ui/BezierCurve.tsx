@@ -35,7 +35,7 @@ const CenterIcon: React.FC = () => (
 const CLR_CURVE       = 'var(--color-brand-base)';
 const CLR_ENDPOINT    = '#ffffff';
 const CLR_HANDLE      = 'var(--color-brand-base)';
-const CLR_HANDLE_LINE = 'var(--color-brand-wash-hover)';
+const CLR_HANDLE_LINE = 'var(--color-border-dark)';
 const CLR_LABEL       = 'var(--color-text-muted)';
 
 const BezierCurve: React.FC = () => {
@@ -83,6 +83,8 @@ const BezierCurve: React.FC = () => {
   panOffsetPxRef.current = panOffsetPx;
 
   const dragging = useRef<'p1' | 'p2' | null>(null);
+  const dragOffset = useRef({ x: 0, y: 0 }); // cursor-to-handle-center offset at mousedown
+  const [topHandle, setTopHandle] = useState<'p1' | 'p2'>('p2'); // last-dragged handle renders on top
   const panning  = useRef(false);
   const lastPanY = useRef(0);
   const resettingPan = useRef(false);
@@ -106,7 +108,17 @@ const BezierCurve: React.FC = () => {
         resetAnim.current.stop();
         resettingPan.current = false;
       }
+      // Capture where inside the handle the user clicked so the handle
+      // doesn't jump its center to the cursor on the first move.
+      const [cx1, cy1, cx2, cy2] = curveRef.current;
+      const ox = originXRef.current;
+      const oy = originYRef.current;
+      const hx = handle === 'p1' ? ox + cx1 * BEZIER_UNIT_PX : ox + cx2 * BEZIER_UNIT_PX;
+      const hy = handle === 'p1' ? oy - cy1 * BEZIER_UNIT_PX : oy - cy2 * BEZIER_UNIT_PX;
+      dragOffset.current = { x: e.clientX - hx, y: e.clientY - hy };
+
       dragging.current = handle;
+      setTopHandle(handle);
       setActiveHandle(handle);
       document.body.classList.add('is-dragging-handle');
       document.body.style.userSelect = 'none';
@@ -135,8 +147,8 @@ const BezierCurve: React.FC = () => {
         const [cx1, cy1, cx2, cy2] = curveRef.current;
         const ox  = originXRef.current;
         const oy  = originYRef.current;
-        const bx  = (e.clientX - ox) / BEZIER_UNIT_PX;
-        const by  = (oy - e.clientY) / BEZIER_UNIT_PX;
+        const bx  = (e.clientX - dragOffset.current.x - ox) / BEZIER_UNIT_PX;
+        const by  = (oy - (e.clientY - dragOffset.current.y)) / BEZIER_UNIT_PX;
         const snap = (v: number) => snapToGridRef.current ? Math.round(v / 0.1) * 0.1 : v;
         const clampedX = Math.max(0, Math.min(1, snap(bx)));
         const snappedY = snap(by);
@@ -243,45 +255,32 @@ const BezierCurve: React.FC = () => {
         {/* ── Fixed endpoint P3 (1,1) ── */}
         <motion.circle cx={p3.x} cy={p3.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.2))' }} animate={{ cx: p3.x, cy: p3.y }} transition={animTransition} />
 
-        {/* ── Draggable control handle P1 ── */}
-        <motion.circle
-          cx={p1.x} cy={p1.y} r={12}
-          fill="transparent" stroke={CLR_HANDLE} strokeWidth={2.5}
-          className="bezier-handle"
-          onMouseDown={onHandleDown('p1')}
-          onMouseEnter={() => setHoveredHandle('p1')}
-          onMouseLeave={() => setHoveredHandle(null)}
-          aria-label="Control point 1 (drag to adjust)"
-          animate={{ cx: p1.x, cy: p1.y }}
-          transition={animTransition}
-        />
-        <motion.circle
-          cx={p1.x} cy={p1.y} r={3.5}
-          fill={CLR_HANDLE}
-          style={{ pointerEvents: 'none' }}
-          animate={{ cx: p1.x, cy: p1.y }}
-          transition={animTransition}
-        />
-
-        {/* ── Draggable control handle P2 ── */}
-        <motion.circle
-          cx={p2.x} cy={p2.y} r={12}
-          fill="transparent" stroke={CLR_HANDLE} strokeWidth={2.5}
-          className="bezier-handle"
-          onMouseDown={onHandleDown('p2')}
-          onMouseEnter={() => setHoveredHandle('p2')}
-          onMouseLeave={() => setHoveredHandle(null)}
-          aria-label="Control point 2 (drag to adjust)"
-          animate={{ cx: p2.x, cy: p2.y }}
-          transition={animTransition}
-        />
-        <motion.circle
-          cx={p2.x} cy={p2.y} r={3.5}
-          fill={CLR_HANDLE}
-          style={{ pointerEvents: 'none' }}
-          animate={{ cx: p2.x, cy: p2.y }}
-          transition={animTransition}
-        />
+        {/* ── Draggable control handles — topHandle renders last (on top in SVG) ── */}
+        {([topHandle === 'p2' ? 'p1' : 'p2', topHandle] as const).map(h => {
+          const p  = h === 'p1' ? p1 : p2;
+          return (
+            <React.Fragment key={h}>
+              <motion.circle
+                cx={p.x} cy={p.y} r={12}
+                fill="transparent" stroke={CLR_HANDLE} strokeWidth={2.5}
+                className="bezier-handle"
+                onMouseDown={onHandleDown(h)}
+                onMouseEnter={() => setHoveredHandle(h)}
+                onMouseLeave={() => setHoveredHandle(null)}
+                aria-label={`Control point ${h === 'p1' ? 1 : 2} (drag to adjust)`}
+                animate={{ cx: p.x, cy: p.y }}
+                transition={animTransition}
+              />
+              <motion.circle
+                cx={p.x} cy={p.y} r={3.5}
+                fill={CLR_HANDLE}
+                style={{ pointerEvents: 'none' }}
+                animate={{ cx: p.x, cy: p.y }}
+                transition={animTransition}
+              />
+            </React.Fragment>
+          );
+        })}
 
         {/* ── Drag value pill popup ── */}
         <motion.g
