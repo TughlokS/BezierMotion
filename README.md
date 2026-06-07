@@ -8,6 +8,7 @@ A visual cubic-bezier curve editor for crafting custom CSS easing functions. Dra
 
 - **Interactive curve editor** – drag control points with real-time visual feedback
 - **Animation previews** – translate, scale, and opacity panels that animate with your curve
+- **Draggable panels** – reposition every panel freely; drop one near its origin to snap it back, with a ghost outline and glow guiding the way
 - **Preset library** – common easing functions (ease-in, ease-out, spring, etc.)
 - **Copy to clipboard** – one-click copy of the `cubic-bezier()` value
 - **Dark / Light theme** – ripple-expand transition from the toggle button
@@ -36,12 +37,10 @@ npm run build
 
 ## Deploy
 
-The app is deployed to GitHub Pages via the `gh-pages` branch:
-
-```bash
-npm run build
-npx gh-pages -d dist
-```
+Every push to `master` is automatically built and published to GitHub Pages
+via the [`deploy.yml`](.github/workflows/deploy.yml) GitHub Actions workflow.
+You can also trigger a deploy manually from the **Actions** tab
+("Run workflow"). No manual build or branch management required.
 
 ## License
 
