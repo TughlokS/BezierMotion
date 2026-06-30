@@ -35,25 +35,32 @@
 }
 
 .save-modal__heading {
-  font-size: 0.95rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: var(--color-text-main);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
   margin: 0;
   text-align: center;
 }
 
-/* Simulated 'Giant Preset' appearance */
+/* Simulated 'Giant Preset' appearance — mirrors .preset-item */
 .save-modal__preview {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.035);
   color: var(--color-text-main);
   border-radius: 16px;
-  border: 1px solid transparent;
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-border-light);
+  transition: border-color 0.2s ease;
+}
+
+[data-theme="dark"] .save-modal__preview {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--color-border-main);
 }
 
 .save-modal__icon-wrap {
@@ -133,14 +140,23 @@
 }
 
 .save-modal__btn--cancel {
-  background: var(--color-bg-subtle);
+  background: rgba(0, 0, 0, 0.035);
   color: var(--color-text-body);
+  border-color: var(--color-border-light);
+}
+
+[data-theme="dark"] .save-modal__btn--cancel {
+  background: rgba(255, 255, 255, 0.04);
   border-color: var(--color-border-main);
 }
 
 .save-modal__btn--cancel:hover {
-  background: var(--color-border-light);
+  background: rgba(0, 0, 0, 0.06);
   color: var(--color-text-main);
+}
+
+[data-theme="dark"] .save-modal__btn--cancel:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .save-modal__btn--save {
