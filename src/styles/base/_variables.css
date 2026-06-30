@@ -73,12 +73,12 @@
   --color-border-light: #2b2e33; /* Internal separators */
   --color-border-dark:  #3b4252; /* Curve value separators / dot grid */
 
-  /* Shadows - Dark mode shadows need to be much darker/less transparent to show up on dark backgrounds */
-  --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-md:      0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.6);
-  
-  --shadow-brand-sm: 0 4px 12px rgba(245, 113, 95, 0.15);
-  --shadow-brand-md: 0 6px 16px rgba(245, 113, 95, 0.25);
-  --shadow-brand-lg: 0 10px 36px rgba(245, 113, 95, 0.4);
+  /* Shadows – dark mode: borders carry the separation, shadows just hint at elevation */
+  --shadow-sm:      0 1px 4px rgba(0, 0, 0, 0.25);
+  --shadow-md:      0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-lg:      0 4px 16px rgba(0, 0, 0, 0.35);
+
+  --shadow-brand-sm: 0 4px 12px rgba(245, 113, 95, 0.12);
+  --shadow-brand-md: 0 6px 16px rgba(245, 113, 95, 0.2);
+  --shadow-brand-lg: 0 10px 36px rgba(245, 113, 95, 0.3);
 }

@@ -393,15 +393,24 @@ body.is-dragging-handle * {
   border-radius: 12px;
   text-align: left;
 
-  background: transparent;
+  background: rgba(0, 0, 0, 0.035);
   color: var(--color-text-main);
-  border: 1px solid transparent;
-  box-shadow: var(--shadow-md);
-  transition: border-color 0.2s ease, color 0.2s ease;
+  border: 1px solid var(--color-border-light);
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+[data-theme="dark"] .preset-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--color-border-main);
 }
 
 .preset-item:hover:not(.preset-item--active) {
   border-color: var(--color-brand-base);
+  background: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .preset-item:hover:not(.preset-item--active) {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .preset-item--active {
