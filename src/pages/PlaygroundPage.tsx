@@ -10,6 +10,7 @@ import TranslatePanel from '../components/ui/TranslatePanel';
 import ScalePanel from '../components/ui/ScalePanel';
 import OpacityPanel from '../components/ui/OpacityPanel';
 import CurveValuesBar from '../components/ui/CurveValuesBar';
+import SaveButton from '../components/ui/SaveButton';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import SaveModal from '../components/ui/SaveModal';
 import DraggablePanel from '../components/ui/DraggablePanel';
@@ -61,6 +62,7 @@ const PlaygroundPage: React.FC = () => (
       {/* Bottom-center: tools + bezier values */}
       <div className="bottom-bar">
         <CurveValuesBar />
+        <SaveButton />
         <TopControls />
       </div>
 

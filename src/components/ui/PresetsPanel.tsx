@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { usePlayground } from '../../context/PlaygroundContext';
 import type { BezierCP, Preset } from '../../context/PlaygroundContext';
-import { useMorphHover } from '../../hooks/useMorphHover';
 
 // ─────────────────────────────────────────────
 //  PresetsPanel – left floating panel
@@ -69,15 +68,6 @@ export const MiniCurveIcon: React.FC<{ cp1: BezierCP; cp2: BezierCP; className?:
   );
 };
 
-// ── Save icon ──────────────────────────────────
-const SaveIcon: React.FC = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
-    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-    <polyline points="17 21 17 13 7 13 7 21" />
-    <polyline points="7 3 7 8 15 8" />
-  </svg>
-);
-
 // ── Format helper ──────────────────────────────
 const fmt = (n: number) => parseFloat(n.toFixed(2)).toString();
 
@@ -108,8 +98,7 @@ const PresetItemRow: React.FC<{
 
 // ── Panel ──────────────────────────────────────
 const PresetsPanel: React.FC = () => {
-  const { presets, selectedPresetId, selectPreset, saveCustomPreset } = usePlayground();
-  const saveMorph = useMorphHover();
+  const { presets, selectedPresetId, selectPreset } = usePlayground();
 
   // Refs for the list container and each item button
   const listRef = useRef<HTMLDivElement>(null);
@@ -168,18 +157,6 @@ const PresetsPanel: React.FC = () => {
             }}
           />
         ))}
-      </div>
-
-      <div className="presets-panel__footer">
-        <button
-          className={`presets-panel__save-btn ${saveMorph.className}`}
-          onClick={saveCustomPreset}
-          id="save-custom-preset"
-          {...saveMorph.handlers}
-        >
-          <SaveIcon />
-          Save Custom
-        </button>
       </div>
     </div>
   );
