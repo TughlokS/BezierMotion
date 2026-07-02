@@ -5,6 +5,17 @@ import { usePlayground } from '../../context/PlaygroundContext';
 //  TopControls – bottom bar 3-icon button panel
 // ─────────────────────────────────────────────
 
+// Reset-view icon (concentric-ring crosshair)
+const ResetViewIcon: React.FC = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3" />
+    <line x1="12" y1="2" x2="12" y2="7" />
+    <line x1="12" y1="17" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="7" y2="12" />
+    <line x1="17" y1="12" x2="22" y2="12" />
+  </svg>
+);
+
 const GridLockIcon: React.FC = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <rect x="3" y="3" width="8" height="8" rx="2" />
@@ -28,10 +39,23 @@ const SettingsIcon: React.FC = () => (
 );
 
 const TopControls: React.FC = () => {
-  const { snapToGrid, setSnapToGrid } = usePlayground();
+  const { snapToGrid, setSnapToGrid, canResetView, resetView } = usePlayground();
 
   return (
     <div className="top-controls" role="toolbar" aria-label="View controls">
+      {/* Reset view — glows when the view is off-default; inert (no-op) otherwise */}
+      <button
+        className={`top-controls__btn ${canResetView ? 'top-controls__btn--reset-active' : ''}`}
+        aria-label="Reset view"
+        aria-disabled={!canResetView}
+        title={canResetView ? 'Reset view (recenter & reset zoom)' : 'View is at default'}
+        onClick={resetView}
+      >
+        <ResetViewIcon />
+      </button>
+
+      <div className="top-controls__divider" aria-hidden="true" />
+
       {/* Snap to grid — toggleable */}
       <button
         className={`top-controls__btn ${snapToGrid ? 'top-controls__btn--active' : ''}`}

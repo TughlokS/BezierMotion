@@ -1,33 +1,33 @@
 import React, { useEffect, useRef } from 'react';
-import { DOT_SPACING, BEZIER_UNIT_PX } from '../../constants';
 import { usePlayground } from '../../context/PlaygroundContext';
+import { computeView } from '../../utils/viewTransform';
 
 // ─────────────────────────────────────────────
 //  BackgroundGrid – canvas dot grid with cursor proximity effect
 //
-//  Each dot spacing = 0.1 bezier units (DOT_SPACING = 40 px).
-//  Each dot scales up to MAX_MULTIPLIER × its base radius when the
-//  cursor is directly over it, falling back to normal size at
-//  EFFECT_RADIUS px away (cosine easing for a smooth wave).
+//  Dot spacing scales with zoom (dotPx) so the grid expands/contracts
+//  with the coordinate space, but each dot's rendered radius stays a
+//  constant DOT_BASE_R (scale-invariant). Dots grow up to
+//  MAX_MULTIPLIER × near the cursor (cosine falloff over EFFECT_RADIUS).
 // ─────────────────────────────────────────────
 
 const DOT_BASE_R     = 1.5;
-const EFFECT_RADIUS  = 140; // px – how far the ripple reaches
+const EFFECT_RADIUS  = 140; // px – how far the ripple reaches (screen-space, zoom-independent)
 const MAX_MULTIPLIER = 2;   // centre dot grows to 2× base size
-
-const snapToDot = (v: number): number => {
-  const phase = DOT_SPACING / 2;
-  return phase + DOT_SPACING * Math.round((v - phase) / DOT_SPACING);
-};
 
 const BackgroundGrid: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouse     = useRef({ x: -9999, y: -9999 });
   const raf       = useRef<number>(0);
-  const panRef    = useRef(0); // receives panOffsetPx without re-mounting effect
+  // Receive transform state without re-mounting the draw loop.
+  const panRef    = useRef(0);
+  const panXRef   = useRef(0);
+  const zoomRef   = useRef(1);
 
-  const { panOffsetPx } = usePlayground();
-  panRef.current = panOffsetPx;
+  const { panOffsetPx, panOffsetXPx, zoom } = usePlayground();
+  panRef.current  = panOffsetPx;
+  panXRef.current = panOffsetXPx;
+  zoomRef.current = zoom;
 
   useEffect(() => {
     const canvas = canvasRef.current!;
@@ -61,16 +61,16 @@ const BackgroundGrid: React.FC = () => {
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, w, h);
 
-      /* Axes lines from anchored control points (P0 and P3) */
-      const baseOriginX = snapToDot(w / 2 - BEZIER_UNIT_PX / 2);
-      const baseOriginY = snapToDot(h / 2 + BEZIER_UNIT_PX / 2);
-      const originX = baseOriginX;
-      const originY = baseOriginY + panRef.current;
+      /* Shared world→screen transform (pan on both axes + zoom scale) */
+      const { originX, originY, unitPx, dotPx } = computeView({
+        w, h, panX: panXRef.current, panY: panRef.current, zoom: zoomRef.current,
+      });
 
+      /* Axes lines from anchored control points (P0 and P3) */
       const p0x = originX;
       const p0y = originY;
-      const p3x = originX + BEZIER_UNIT_PX;
-      const p3y = originY - BEZIER_UNIT_PX;
+      const p3x = originX + unitPx;
+      const p3y = originY - unitPx;
 
       ctx.beginPath();
       // P0 Horizontal and Vertical
@@ -91,11 +91,14 @@ const BackgroundGrid: React.FC = () => {
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      /* Dots – y phase shifts with pan so grid tracks the bezier graph */
+      /* Dots – spacing = dotPx (zoom-scaled); phase aligns a dot to the
+         origin on both axes so the grid tracks the bezier graph. Radius
+         stays constant (scale-invariant). */
       ctx.fillStyle = dotColor;
-      const yPhase = ((DOT_SPACING / 2 + panRef.current) % DOT_SPACING + DOT_SPACING) % DOT_SPACING;
-      for (let cx = DOT_SPACING / 2; cx < w + DOT_SPACING; cx += DOT_SPACING) {
-        for (let cy = yPhase; cy < h + DOT_SPACING; cy += DOT_SPACING) {
+      const xPhase = ((originX % dotPx) + dotPx) % dotPx;
+      const yPhase = ((originY % dotPx) + dotPx) % dotPx;
+      for (let cx = xPhase; cx < w + dotPx; cx += dotPx) {
+        for (let cy = yPhase; cy < h + dotPx; cy += dotPx) {
           const dist = Math.hypot(cx - mx, cy - my);
 
           let r = DOT_BASE_R;

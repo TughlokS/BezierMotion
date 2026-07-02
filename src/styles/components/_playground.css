@@ -92,52 +92,6 @@ body.is-dragging-handle * {
   cursor: none !important;
 }
 
-/* ── Pan Reset Button ── */
-.pan-reset-btn {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.85);
-  z-index: 9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 15px 16px;
-  border-radius: 12px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  font-family: inherit;
-  opacity: 0;
-  pointer-events: none;
-  
-  /* Morph Base Extends */
-  background-color: var(--color-bg-base); /* Base revealed on hover */
-  color: var(--color-bg-base); /* Base Text (sits on var(--color-brand-base) ::before) */
-  border: 1px solid transparent;
-  box-shadow: var(--shadow-brand-sm);
-}
-
-.pan-reset-btn::before {
-  background-color: var(--color-brand-base); /* Base Visible */
-}
-
-.pan-reset-btn--visible {
-  opacity: 1;
-  pointer-events: all;
-  transform: translate(-50%, -50%) scale(1);
-}
-
-.pan-reset-btn--visible:hover {
-  color: var(--color-brand-base);
-  border-color: var(--color-brand-base);
-  box-shadow: var(--shadow-brand-md);
-}
-
-.pan-reset-btn--visible:active {
-  transform: translate(-50%, -50%) scale(0.95);
-  box-shadow: var(--shadow-brand-sm);
-}
 
 /* ── Morphing Button Base Class ──────────────── */
 .morph-btn {
@@ -281,6 +235,25 @@ body.is-dragging-handle * {
 .top-controls__btn--active:hover {
   color: var(--color-bg-base);
   background: var(--color-brand-base);
+}
+
+/* Reset button — glows brand while the view is off-default, cueing the click.
+   When not active it's a plain toolbar button (default hover, click no-ops). */
+.top-controls__btn--reset-active {
+  color: var(--color-bg-base);
+  background: var(--color-brand-base);
+  animation: resetGlowPulse 1.8s ease-in-out infinite;
+}
+
+.top-controls__btn--reset-active:hover {
+  color: var(--color-bg-base);
+  background: var(--color-brand-base);
+  filter: brightness(1.06);
+}
+
+@keyframes resetGlowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 113, 95, 0.5); }
+  50%      { box-shadow: 0 0 11px 3px rgba(245, 113, 95, 0.55); }
 }
 
 .top-controls__divider {

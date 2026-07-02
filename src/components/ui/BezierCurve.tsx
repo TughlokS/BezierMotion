@@ -1,35 +1,29 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { motion, animate } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { usePlayground } from '../../context/PlaygroundContext';
-import { DOT_SPACING, BEZIER_UNIT_PX } from '../../constants';
-import { useMorphHover } from '../../hooks/useMorphHover';
+import { BEZIER_UNIT_PX, ZOOM_MIN, ZOOM_MAX, ZOOM_SENSITIVITY } from '../../constants';
+import { computeView } from '../../utils/viewTransform';
 
 // ─────────────────────────────────────────────
-//  BezierCurve – interactive SVG overlay with Y-axis panning
+//  BezierCurve – interactive SVG overlay with pan + scroll-wheel zoom
 //
-//  Pan limits (in bezier units from origin 0):
-//    Max up  : bezier Y=3 at screen centre → panOffset = -2.5 × BEZIER_UNIT_PX
-//    Max down: bezier Y=-3 at screen centre → panOffset = +3.5 × BEZIER_UNIT_PX
+//  Pan limits are expressed in bezier units and scale with zoom, so the
+//  reachable travel stays constant regardless of zoom level:
+//    Max up  : bezier Y=3 at screen centre → -2.5 units
+//    Max down: bezier Y=-3 at screen centre → +3.5 units
 // ─────────────────────────────────────────────
 
-const PAN_MIN = -2.5 * BEZIER_UNIT_PX; // px – max pan up
-const PAN_MAX =  3.5 * BEZIER_UNIT_PX; // px – max pan down
+const PAN_UNITS_MIN = -2.5; // units – max pan up   (× unitPx at current zoom)
+const PAN_UNITS_MAX =  3.5; // units – max pan down (× unitPx at current zoom)
 
-const snapToDot = (v: number): number => {
-  const phase = DOT_SPACING / 2;
-  return phase + DOT_SPACING * Math.round((v - phase) / DOT_SPACING);
-};
+// Universal horizontal pan (works at any zoom): allowed until the canvas is
+// fully off-screen, detected by the opposite anchor reaching the far edge —
+// pan right stops when P0 (0,0) hits the right edge (originX = w); pan left
+// stops when P3 (1,1) hits the left edge (originX = -unitPx). Since
+// originX = (w - unitPx)/2 + panX, that limit is ±(w + unitPx)/2.
+const xPanLimit = (unitPx: number, w: number) => (unitPx + w) / 2;
 
-// ── Reset-pan icon (concentric-ring crosshair) ────────────────────
-const CenterIcon: React.FC = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <circle cx="12" cy="12" r="3" />
-    <line x1="12" y1="2" x2="12" y2="7" />
-    <line x1="12" y1="17" x2="12" y2="22" />
-    <line x1="2" y1="12" x2="7" y2="12" />
-    <line x1="17" y1="12" x2="22" y2="12" />
-  </svg>
-);
+const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 // Style tokens
 const CLR_CURVE       = 'var(--color-brand-base)';
@@ -39,10 +33,17 @@ const CLR_HANDLE_LINE = 'var(--color-border-dark)';
 const CLR_LABEL       = 'var(--color-text-muted)';
 
 const BezierCurve: React.FC = () => {
-  const { curveValues, setCurveValues, panOffsetPx, setPanOffsetPx, snapToGrid, activeHandle, setActiveHandle, setHoveredHandle } = usePlayground();
-  const resetMorph = useMorphHover();
+  const {
+    curveValues, setCurveValues,
+    panOffsetPx, setPanOffsetPx,
+    panOffsetXPx, setPanOffsetXPx,
+    zoom, setZoom,
+    isResettingView, cancelViewReset,
+    snapToGrid, activeHandle, setActiveHandle, setHoveredHandle,
+  } = usePlayground();
   const snapToGridRef = useRef(snapToGrid);
   snapToGridRef.current = snapToGrid;
+  const svgRef = useRef<SVGSVGElement>(null);
 
   // Viewport size
   const [vp, setVp] = useState({ w: window.innerWidth, h: window.innerHeight });
@@ -63,34 +64,39 @@ const BezierCurve: React.FC = () => {
     };
   }, []);
 
-  // Origin: snapped base position + continuous pan offset
-  const baseOriginX = snapToDot(vp.w / 2 - BEZIER_UNIT_PX / 2);
-  const baseOriginY = snapToDot(vp.h / 2 + BEZIER_UNIT_PX / 2);
-  const originX = baseOriginX;
-  const originY = baseOriginY + panOffsetPx;
-
-  const toSx = (bx: number) => originX + bx * BEZIER_UNIT_PX;
-  const toSy = (by: number) => originY - by * BEZIER_UNIT_PX;
+  // Origin + scale: shared transform (pan on both axes, zoom scales unitPx)
+  const { originX, originY, unitPx, toSx, toSy } = computeView({
+    w: vp.w, h: vp.h, panX: panOffsetXPx, panY: panOffsetPx, zoom,
+  });
 
   // ── Refs for stable event-handler closures ──────────────────────
   const curveRef        = useRef(curveValues);
   const originXRef      = useRef(originX);
   const originYRef      = useRef(originY);
+  const unitPxRef       = useRef(unitPx);
   const panOffsetPxRef  = useRef(panOffsetPx);
+  const panXRef         = useRef(panOffsetXPx);
+  const zoomRef         = useRef(zoom);
+  const vpRef           = useRef(vp);
+  vpRef.current          = vp;
   curveRef.current       = curveValues;
   originXRef.current     = originX;
   originYRef.current     = originY;
+  unitPxRef.current      = unitPx;
   panOffsetPxRef.current = panOffsetPx;
+  panXRef.current        = panOffsetXPx;
+  zoomRef.current        = zoom;
 
   const dragging = useRef<'p1' | 'p2' | null>(null);
   const dragOffset = useRef({ x: 0, y: 0 }); // cursor-to-handle-center offset at mousedown
   const [topHandle, setTopHandle] = useState<'p1' | 'p2'>('p2'); // last-dragged handle renders on top
   const panning  = useRef(false);
   const lastPanY = useRef(0);
-  const resettingPan = useRef(false);
-  const resetAnim = useRef<any>(null);
+  const lastPanX = useRef(0);
   const dragCooldown = useRef(false);
   const cooldownTimer = useRef<number | null>(null);
+  const zooming = useRef(false); // true briefly after a wheel tick → disables spring so zoom tracks instantly
+  const zoomTimer = useRef<number | null>(null);
 
   // ── Screen positions of all four bezier points ──────────────────
   const [x1, y1, x2, y2] = curveValues;
@@ -104,17 +110,15 @@ const BezierCurve: React.FC = () => {
     (e: React.MouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
-      if (resetAnim.current) {
-        resetAnim.current.stop();
-        resettingPan.current = false;
-      }
+      cancelViewReset();
       // Capture where inside the handle the user clicked so the handle
       // doesn't jump its center to the cursor on the first move.
       const [cx1, cy1, cx2, cy2] = curveRef.current;
       const ox = originXRef.current;
       const oy = originYRef.current;
-      const hx = handle === 'p1' ? ox + cx1 * BEZIER_UNIT_PX : ox + cx2 * BEZIER_UNIT_PX;
-      const hy = handle === 'p1' ? oy - cy1 * BEZIER_UNIT_PX : oy - cy2 * BEZIER_UNIT_PX;
+      const u  = unitPxRef.current;
+      const hx = handle === 'p1' ? ox + cx1 * u : ox + cx2 * u;
+      const hy = handle === 'p1' ? oy - cy1 * u : oy - cy2 * u;
       dragOffset.current = { x: e.clientX - hx, y: e.clientY - hy };
 
       dragging.current = handle;
@@ -122,22 +126,20 @@ const BezierCurve: React.FC = () => {
       setActiveHandle(handle);
       document.body.classList.add('is-dragging-handle');
       document.body.style.userSelect = 'none';
-    }, []);
+    }, [cancelViewReset, setActiveHandle]);
 
   // ── SVG background down → start panning ────────────────────────
   const onSvgDown = useCallback((e: React.MouseEvent) => {
     if (dragging.current) return;       // handle drag has priority
     if (e.button !== 0 && e.button !== 2) return;
     e.preventDefault();
-    if (resetAnim.current) {
-      resetAnim.current.stop();
-      resettingPan.current = false;
-    }
+    cancelViewReset();
     panning.current = true;
     lastPanY.current = e.clientY;
+    lastPanX.current = e.clientX;
     document.body.style.cursor = 'grabbing';
     document.body.style.userSelect = 'none';
-  }, []);
+  }, [cancelViewReset]);
 
   // ── Global mouse move / up ──────────────────────────────────────
   useEffect(() => {
@@ -147,8 +149,9 @@ const BezierCurve: React.FC = () => {
         const [cx1, cy1, cx2, cy2] = curveRef.current;
         const ox  = originXRef.current;
         const oy  = originYRef.current;
-        const bx  = (e.clientX - dragOffset.current.x - ox) / BEZIER_UNIT_PX;
-        const by  = (oy - (e.clientY - dragOffset.current.y)) / BEZIER_UNIT_PX;
+        const u   = unitPxRef.current;
+        const bx  = (e.clientX - dragOffset.current.x - ox) / u;
+        const by  = (oy - (e.clientY - dragOffset.current.y)) / u;
         const snap = (v: number) => snapToGridRef.current ? Math.round(v / 0.1) * 0.1 : v;
         const clampedX = Math.max(0, Math.min(1, snap(bx)));
         const snappedY = snap(by);
@@ -156,12 +159,23 @@ const BezierCurve: React.FC = () => {
         else                           setCurveValues([cx1, cy1, clampedX, snappedY]);
 
       } else if (panning.current) {
-        // ── Y-axis pan ──
-        const delta  = (e.clientY - lastPanY.current) * 2; // pan twice as fast
+        const u = unitPxRef.current;
+        const w = vpRef.current.w;
+
+        // ── X-axis pan (universal; stops when the canvas is fully off-screen) ──
+        const dx = e.clientX - lastPanX.current;
+        lastPanX.current = e.clientX;
+        const xLim = xPanLimit(u, w);
+        const nextX = clamp(panXRef.current + dx, -xLim, xLim);
+        panXRef.current = nextX;
+        setPanOffsetXPx(nextX);
+
+        // ── Y-axis pan (2× speed; limits scale with zoom so travel stays constant) ──
+        const dy = (e.clientY - lastPanY.current) * 2;
         lastPanY.current = e.clientY;
-        const next   = Math.min(PAN_MAX, Math.max(PAN_MIN, panOffsetPxRef.current + delta));
-        panOffsetPxRef.current = next;
-        setPanOffsetPx(next);
+        const nextY = clamp(panOffsetPxRef.current + dy, PAN_UNITS_MIN * u, PAN_UNITS_MAX * u);
+        panOffsetPxRef.current = nextY;
+        setPanOffsetPx(nextY);
       }
     };
 
@@ -190,7 +204,55 @@ const BezierCurve: React.FC = () => {
     };
   }, [setCurveValues, setPanOffsetPx]);
 
-  const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || resettingPan.current || resizing.current;
+  // ── Scroll-wheel zoom (Y anchored at cursor, X stays centred) ───
+  // Native non-passive listener so preventDefault() actually stops page zoom.
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      cancelViewReset();
+
+      const s0 = zoomRef.current;
+      const factor = Math.exp(-e.deltaY * ZOOM_SENSITIVITY); // multiplicative → perceptually linear
+      const s1 = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, s0 * factor));
+      if (s1 === s0) return; // already clamped at a limit
+
+      const k = s1 / s0;
+      const newUnitPx = BEZIER_UNIT_PX * s1;
+      const w = vpRef.current.w;
+
+      // Y: keep the world point under the cursor fixed (vertical focal zoom).
+      const sy = e.clientY;
+      const oy0 = originYRef.current;
+      const baseY = oy0 - panOffsetPxRef.current; // = baseOriginY (Y is base + pan)
+      const oy1 = sy - (sy - oy0) * k;
+      const panY1 = clamp(oy1 - baseY, PAN_UNITS_MIN * newUnitPx, PAN_UNITS_MAX * newUnitPx);
+
+      // X: no cursor drift — the box is centred by construction (panX = 0 stays
+      // centred through zoom). Preserve any manual pan, re-clamped to the new
+      // zoom's allowed range.
+      const panX1 = clamp(panXRef.current, -xPanLimit(newUnitPx, w), xPanLimit(newUnitPx, w));
+
+      setZoom(s1);
+      setPanOffsetXPx(panX1);
+      setPanOffsetPx(panY1);
+
+      // Disable the spring while actively zooming so the curve tracks instantly.
+      zooming.current = true;
+      if (zoomTimer.current) window.clearTimeout(zoomTimer.current);
+      zoomTimer.current = window.setTimeout(() => { zooming.current = false; }, 150);
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      if (zoomTimer.current) window.clearTimeout(zoomTimer.current);
+    };
+  }, [setZoom, setPanOffsetXPx, setPanOffsetPx, cancelViewReset]);
+
+  const isInteractiveMove = dragging.current !== null || panning.current || dragCooldown.current || isResettingView || resizing.current || zooming.current;
   const isSnapDragging = snapToGrid && activeHandle !== null;
   const animTransition = isSnapDragging
     ? { type: 'spring' as const, stiffness: 1200, damping: 40, mass: 0.3 }  // satisfying snap "click"
@@ -213,32 +275,12 @@ const BezierCurve: React.FC = () => {
   const labelTimeX     = p0.x - 52;
   const labelTimeY     = (p0.y + p3.y) / 2;
 
-  // ── Viewport visibility ────────────────────────────────────────
-  const isOffScreen = (sy: number) => sy < -20 || sy > vp.h + 20;
-  const showReset   = isOffScreen(p0.y) && isOffScreen(p3.y);
-
-  const resetPan = () => {
-    resettingPan.current = true;
-    if (resetAnim.current) resetAnim.current.stop();
-    resetAnim.current = animate(panOffsetPxRef.current, 0, {
-      type: 'spring',
-      bounce: 0,
-      duration: 0.6,
-      onUpdate: (latest) => {
-        panOffsetPxRef.current = latest;
-        setPanOffsetPx(latest); // Updates coordinate state for path/circle/labels/canvas all at once
-      },
-      onComplete: () => {
-        resettingPan.current = false;
-      }
-    });
-  };
-
   return (
     <>
       <svg
+        ref={svgRef}
         className="bezier-curve-overlay bezier-curve-overlay--pannable"
-        aria-label="Bezier curve editor – drag to pan, drag handles to adjust curve"
+        aria-label="Bezier curve editor – drag to pan, scroll to zoom, drag handles to adjust curve"
         onMouseDown={onSvgDown}
         onContextMenu={e => e.preventDefault()}
       >
@@ -343,18 +385,6 @@ const BezierCurve: React.FC = () => {
           TIME (T)
         </text>
       </svg>
-
-      {/* ── Pan reset button – visible only when both endpoints are off-screen ── */}
-      <button
-        className={`pan-reset-btn ${showReset ? ' pan-reset-btn--visible' : ''} ${resetMorph.className}`}
-        onClick={resetPan}
-        title="Reset view to center"
-        aria-label="Reset pan – bring curve back to center"
-        {...resetMorph.handlers}
-      >
-        <CenterIcon />
-        <span>Reset View</span>
-      </button>
     </>
   );
 };

@@ -1,5 +1,10 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback, useMemo } from 'react';
+import { animate } from 'framer-motion';
 import { useAnimationEngine } from '../hooks/useAnimationEngine';
+import { useLocalStorage } from '../hooks';
+
+// localStorage key for user-saved (custom) presets — defaults stay in code
+const CUSTOM_PRESETS_KEY = 'bezierMotion.customPresets';
 
 // ─────────────────────────────────────────────
 //  Playground Context – all animation/curve state
@@ -43,6 +48,18 @@ interface PlaygroundState {
   commitSavePreset: (name: string) => void;
   panOffsetPx: number;
   setPanOffsetPx: (v: number) => void;
+  panOffsetXPx: number;
+  setPanOffsetXPx: (v: number) => void;
+  zoom: number;
+  setZoom: (v: number) => void;
+  /** true when the view (pan or zoom) is not at its default — drives the Reset button glow */
+  canResetView: boolean;
+  /** true while the reset animation is playing (lets the curve track it without spring lag) */
+  isResettingView: boolean;
+  /** animate pan + zoom back to defaults (no-op if already at default) */
+  resetView: () => void;
+  /** stop an in-progress reset animation (called when the user interacts) */
+  cancelViewReset: () => void;
   snapToGrid: boolean;
   setSnapToGrid: (v: boolean) => void;
   activeHandle: 'p1' | 'p2' | null;
@@ -58,14 +75,52 @@ const PlaygroundContext = createContext<PlaygroundState | undefined>(undefined);
 export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [curveValues, setCurveValues] = useState<[number, number, number, number]>([0.42, 0, 0.58, 1]);
   const [duration, setDuration] = useState(0.5);
-  const [presets, setPresets] = useState<Preset[]>(DEFAULT_PRESETS);
+  // Defaults live in code; user-saved presets persist in localStorage.
+  const [customPresets, setCustomPresets] = useLocalStorage<Preset[]>(CUSTOM_PRESETS_KEY, []);
+  const presets = useMemo(() => [...DEFAULT_PRESETS, ...customPresets], [customPresets]);
   const [selectedPresetId, setSelectedPresetId] = useState<string | null>('ease-in-out');
 
   // Animation engine — writes CSS vars directly, no React state updates per frame
   useAnimationEngine(curveValues, duration);
 
   const [panOffsetPx, setPanOffsetPx] = useState(0);
+  const [panOffsetXPx, setPanOffsetXPx] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const [isResettingView, setIsResettingView] = useState(false);
   const [snapToGrid, setSnapToGrid] = useState(false);
+
+  // Refs mirror current view state so resetView() can stay a stable callback.
+  const zoomRef = useRef(zoom);   zoomRef.current = zoom;
+  const panXRef = useRef(panOffsetXPx); panXRef.current = panOffsetXPx;
+  const panYRef = useRef(panOffsetPx);  panYRef.current = panOffsetPx;
+  const resetAnimRef = useRef<{ stop: () => void } | null>(null);
+
+  // View differs from default (1× zoom, no pan) → Reset button becomes active/glows.
+  const canResetView = Math.abs(zoom - 1) > 0.005 || panOffsetXPx !== 0 || panOffsetPx !== 0;
+
+  const cancelViewReset = useCallback(() => {
+    if (resetAnimRef.current) { resetAnimRef.current.stop(); resetAnimRef.current = null; }
+    setIsResettingView(false);
+  }, []);
+
+  const resetView = useCallback(() => {
+    const startX = panXRef.current;
+    const startY = panYRef.current;
+    const startZoom = zoomRef.current;
+    if (Math.abs(startZoom - 1) <= 0.005 && startX === 0 && startY === 0) return; // already default
+    if (resetAnimRef.current) resetAnimRef.current.stop();
+    setIsResettingView(true);
+    // Animate a progress value 1 → 0 and interpolate pan/zoom toward defaults.
+    resetAnimRef.current = animate(1, 0, {
+      type: 'spring', bounce: 0, duration: 0.6,
+      onUpdate: (p) => {
+        setPanOffsetXPx(startX * p);
+        setPanOffsetPx(startY * p);
+        setZoom(1 + (startZoom - 1) * p);
+      },
+      onComplete: () => { setIsResettingView(false); resetAnimRef.current = null; },
+    });
+  }, []);
   const [activeHandle, setActiveHandle] = useState<'p1' | 'p2' | null>(null);
   const [hoveredHandle, setHoveredHandle] = useState<'p1' | 'p2' | null>(null);
   const [isSaveModalOpen, setSaveModalOpen] = useState(false);
@@ -100,7 +155,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       isLocked: false
     };
 
-    setPresets(prev => [...prev, newPreset]);
+    setCustomPresets([...customPresets, newPreset]);
     setSelectedPresetId(newId);
     setSaveModalOpen(false);
   };
@@ -111,6 +166,9 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       duration, setDuration,
       presets, selectedPresetId, selectPreset, saveCustomPreset, commitSavePreset,
       panOffsetPx, setPanOffsetPx,
+      panOffsetXPx, setPanOffsetXPx,
+      zoom, setZoom,
+      canResetView, isResettingView, resetView, cancelViewReset,
       snapToGrid, setSnapToGrid,
       activeHandle, setActiveHandle,
       hoveredHandle, setHoveredHandle,
