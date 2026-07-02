@@ -283,6 +283,11 @@ const BezierCurve: React.FC = () => {
         aria-label="Bezier curve editor – drag to pan, scroll to zoom, drag handles to adjust curve"
         onMouseDown={onSvgDown}
         onContextMenu={e => e.preventDefault()}
+        style={{
+          '--origin-x': `${originX}px`,
+          '--origin-y': `${originY}px`,
+          '--unit-px': `${unitPx}px`,
+        } as React.CSSProperties}
       >
         {/* ── Handle guide lines (dashed) ── */}
         <motion.path d={handleLine1} stroke={CLR_HANDLE_LINE} strokeWidth={1.5} strokeDasharray="5 4" fill="none" animate={{ d: handleLine1 }} transition={animTransition} />
@@ -290,6 +295,11 @@ const BezierCurve: React.FC = () => {
 
         {/* ── Cubic bezier curve ── */}
         <motion.path d={curvePath} stroke={CLR_CURVE} strokeWidth={3.5} fill="none" strokeLinecap="round" animate={{ d: curvePath }} transition={animTransition} />
+
+        {/* ── Animation visualizer dot (hollow circle) ── */}
+        <g className="bezier-visualizer-dot">
+          <circle cx={0} cy={0} r={7.2} />
+        </g>
 
         {/* ── Fixed endpoint P0 (0,0) ── */}
         <motion.circle cx={p0.x} cy={p0.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.2))' }} animate={{ cx: p0.x, cy: p0.y }} transition={animTransition} />

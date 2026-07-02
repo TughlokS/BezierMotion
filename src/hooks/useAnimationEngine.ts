@@ -63,10 +63,12 @@ function makeBezier(x1: number, y1: number, x2: number, y2: number) {
 // ── Write animT-derived values to CSS vars ─────────────────────────
 const root = document.documentElement;
 
-function applyAnimT(animT: number) {
-  root.style.setProperty('--anim-translate-x', String(animT));
-  root.style.setProperty('--anim-scale',        String(1 - animT * 0.8));
-  root.style.setProperty('--anim-opacity',       String(1 - animT));
+function applyAnimT(mainEasedT: number, progressLinearT: number, progressEasedT: number) {
+  root.style.setProperty('--anim-translate-x', String(mainEasedT));
+  root.style.setProperty('--anim-scale',        String(1 - mainEasedT * 0.8));
+  root.style.setProperty('--anim-opacity',       String(1 - mainEasedT));
+  root.style.setProperty('--anim-progress-x',   String(progressLinearT));
+  root.style.setProperty('--anim-progress-y',   String(progressEasedT));
 }
 
 // ── Hook ──────────────────────────────────────────────────────────
@@ -97,23 +99,23 @@ export function useAnimationEngine(
       switch (phaseRef.current) {
         case 0: { // forward
           const p = Math.min(elapsed / dur, 1);
-          applyAnimT(bezier(p));
+          applyAnimT(bezier(p), p, bezier(p));
           if (p >= 1) { phaseRef.current = 1; startRef.current = now; }
           break;
         }
         case 1: { // pause at end
-          applyAnimT(bezier(1));
+          applyAnimT(1, 1, 1);
           if (elapsed >= DELAY) { phaseRef.current = 2; startRef.current = now; }
           break;
         }
         case 2: { // backward
           const p = Math.min(elapsed / dur, 1);
-          applyAnimT(1 - bezier(p));
+          applyAnimT(1 - bezier(p), p, bezier(p));
           if (p >= 1) { phaseRef.current = 3; startRef.current = now; }
           break;
         }
         case 3: { // pause at start
-          applyAnimT(0);
+          applyAnimT(0, 0, 0);
           if (elapsed >= DELAY) { phaseRef.current = 0; startRef.current = now; }
           break;
         }
