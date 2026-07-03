@@ -125,7 +125,7 @@ export const GeneralSettingsPanel: React.FC = () => {
   };
 
   return (
-    <div className="general-settings-panel">
+    <div className="theme-settings-panel">
       <h1 className="theme-settings-panel__title">General Settings</h1>
 
       <div className="theme-settings-panel__body">
