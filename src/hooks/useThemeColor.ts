@@ -15,7 +15,8 @@ export const THEME_PALETTES: Record<string, ThemeTokens> = {
   violet: { base: '#8b5cf6', hover: '#7c3aed', active: '#6d28d9', light: '#f5f3ff', rgb: '139, 92, 246' },
   blue: { base: '#1f8ad1', hover: '#1974b0', active: '#145f90', light: '#f0f8fd', rgb: '31, 138, 209' },
   emerald: { base: '#10b981', hover: '#059669', active: '#047857', light: '#ecfdf5', rgb: '16, 185, 129' },
-  crimson: { base: '#cc233f', hover: '#b01c34', active: '#941529', light: '#fdf0f2', rgb: '204, 35, 63' }
+  crimson: { base: '#cc233f', hover: '#b01c34', active: '#941529', light: '#fdf0f2', rgb: '204, 35, 63' },
+  sage: { base: '#416165', hover: '#3a575b', active: '#344e51', light: '#f6f7f7', rgb: '65, 97, 101' }
 };
 
 export function useThemeColor(initialColorKey = 'coral') {
