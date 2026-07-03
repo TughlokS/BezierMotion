@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, useRef, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { animate } from 'framer-motion';
+import { flushSync } from 'react-dom';
 import { useAnimationEngine } from '../hooks/useAnimationEngine';
 import { useLocalStorage } from '../hooks';
+import { useThemeColor } from '../hooks/useThemeColor';
+
 
 // localStorage key for user-saved (custom) presets — defaults stay in code
 const CUSTOM_PRESETS_KEY = 'bezierMotion.customPresets';
@@ -68,6 +71,13 @@ interface PlaygroundState {
   setHoveredHandle: (h: 'p1' | 'p2' | null) => void;
   isSaveModalOpen: boolean;
   setSaveModalOpen: (v: boolean) => void;
+  isSettingsModalOpen: boolean;
+  setSettingsModalOpen: (v: boolean) => void;
+  activeColor: string;
+  setActiveColor: (v: string) => void;
+  themeMode: 'light' | 'dark' | 'auto';
+  isDarkResolved: boolean;
+  setThemeMode: (mode: 'light' | 'dark' | 'auto', triggerElement: HTMLElement | null) => void;
 }
 
 const PlaygroundContext = createContext<PlaygroundState | undefined>(undefined);
@@ -75,6 +85,103 @@ const PlaygroundContext = createContext<PlaygroundState | undefined>(undefined);
 export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [curveValues, setCurveValues] = useState<[number, number, number, number]>([0.42, 0, 0.58, 1]);
   const [duration, setDuration] = useState(0.5);
+  const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
+  const { activeColor, setActiveColor } = useThemeColor('coral');
+
+  const [themeMode, setThemeModeState] = useState<'light' | 'dark' | 'auto'>(() => {
+    return (localStorage.getItem('theme-mode') as 'light' | 'dark' | 'auto') || 'auto';
+  });
+  const [forceRender, setForceRender] = useState(false);
+
+  const isDarkResolved = useMemo(() => {
+    if (themeMode === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    return themeMode === 'dark';
+  }, [themeMode, forceRender]);
+
+  const setThemeMode = useCallback((mode: 'light' | 'dark' | 'auto', triggerElement: HTMLElement | null) => {
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const nextIsDark = mode === 'auto' ? systemPrefersDark : (mode === 'dark');
+    const currentIsDark = themeMode === 'auto' ? systemPrefersDark : (themeMode === 'dark');
+    const shouldAnimate = nextIsDark !== currentIsDark;
+
+    if (!shouldAnimate || !document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setThemeModeState(mode);
+      localStorage.setItem('theme-mode', mode);
+      if (nextIsDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      return;
+    }
+
+    const { top, left, width, height } = triggerElement
+      ? triggerElement.getBoundingClientRect()
+      : { top: window.innerHeight / 2, left: window.innerWidth / 2, width: 0, height: 0 };
+
+    const x = left + width / 2;
+    const y = top + height / 2;
+
+    const right  = window.innerWidth  - left;
+    const bottom = window.innerHeight - top;
+    const maxRadius = Math.hypot(
+      Math.max(left, right),
+      Math.max(top, bottom),
+    );
+
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        setThemeModeState(mode);
+      });
+      localStorage.setItem('theme-mode', mode);
+      if (nextIsDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${maxRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 600,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    });
+  }, [themeMode]);
+
+  useEffect(() => {
+    if (themeMode !== 'auto') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      setForceRender(prev => !prev);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [themeMode]);
+
+  useEffect(() => {
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = themeMode === 'auto' ? systemPrefersDark : (themeMode === 'dark');
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  }, [themeMode]);
+
   // Defaults live in code; user-saved presets persist in localStorage.
   const [customPresets, setCustomPresets] = useLocalStorage<Preset[]>(CUSTOM_PRESETS_KEY, []);
   const presets = useMemo(() => [...DEFAULT_PRESETS, ...customPresets], [customPresets]);
@@ -173,6 +280,9 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       activeHandle, setActiveHandle,
       hoveredHandle, setHoveredHandle,
       isSaveModalOpen, setSaveModalOpen,
+      isSettingsModalOpen, setSettingsModalOpen,
+      activeColor, setActiveColor,
+      themeMode, isDarkResolved, setThemeMode,
     }}>
       {children}
     </PlaygroundContext.Provider>

@@ -39,7 +39,7 @@ const SettingsIcon: React.FC = () => (
 );
 
 const TopControls: React.FC = () => {
-  const { snapToGrid, setSnapToGrid, canResetView, resetView } = usePlayground();
+  const { snapToGrid, setSnapToGrid, canResetView, resetView, setSettingsModalOpen } = usePlayground();
 
   return (
     <div className="top-controls" role="toolbar" aria-label="View controls">
@@ -84,7 +84,7 @@ const TopControls: React.FC = () => {
         className="top-controls__btn"
         aria-label="Settings"
         title="Settings"
-        onClick={() => { /* TODO */ }}
+        onClick={() => setSettingsModalOpen(true)}
       >
         <SettingsIcon />
       </button>

@@ -1,96 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { flushSync } from 'react-dom';
+import React, { useRef } from 'react';
+import { usePlayground } from '../../context/PlaygroundContext';
 import './ThemeToggle.css';
 
 const ThemeToggle: React.FC = () => {
-  const [isDark, setIsDark] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    return savedTheme === 'dark' || (!savedTheme && prefersDark);
-  });
-
+  const { isDarkResolved, setThemeMode } = usePlayground();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-  }, [isDark]);
-
-  const toggleTheme = async () => {
-    const newIsDark = !isDark;
-
-    // ── Fallback: no View Transitions API or user prefers reduced motion ──
-    if (
-      !document.startViewTransition ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      setIsDark(newIsDark);
-      const theme = newIsDark ? 'dark' : 'light';
-      if (newIsDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-      localStorage.setItem('theme', theme);
-      return;
-    }
-
-    // ── Get button centre coordinates before the transition begins ──
-    const btn = buttonRef.current;
-    const { top, left, width, height } = btn
-      ? btn.getBoundingClientRect()
-      : { top: 0, left: 0, width: 0, height: 0 };
-
-    const x = left + width / 2;
-    const y = top + height / 2;
-
-    // Distance from the click origin to the farthest corner of the screen
-    const right  = window.innerWidth  - left;
-    const bottom = window.innerHeight - top;
-    const maxRadius = Math.hypot(
-      Math.max(left, right),
-      Math.max(top, bottom),
-    );
-
-    // ── Start View Transition ──
-    const transition = document.startViewTransition(() => {
-      flushSync(() => {
-        setIsDark(newIsDark);
-      });
-      // Keep localStorage in sync (must happen synchronously inside the callback)
-      localStorage.setItem('theme', newIsDark ? 'dark' : 'light');
-      if (newIsDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-      }
-    });
-
-    // ── Wait until both screenshots are ready, then animate the clip-path ──
-    await transition.ready;
-
-    document.documentElement.animate(
-      {
-        clipPath: [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${maxRadius}px at ${x}px ${y}px)`,
-        ],
-      },
-      {
-        duration: 600,
-        easing: 'cubic-bezier(0.22, 1, 0.36, 1)', // ease-out expo
-        pseudoElement: '::view-transition-new(root)',
-      },
-    );
+  const toggleTheme = () => {
+    const nextMode = isDarkResolved ? 'light' : 'dark';
+    setThemeMode(nextMode, buttonRef.current);
   };
 
   return (
     <button
       ref={buttonRef}
-      className={`theme-toggle ${isDark ? 'theme-toggle--dark' : ''}`}
+      className={`theme-toggle ${isDarkResolved ? 'theme-toggle--dark' : ''}`}
       onClick={toggleTheme}
       aria-label="Toggle dark mode"
       title="Toggle dark mode"

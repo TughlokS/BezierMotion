@@ -1,5 +1,5 @@
-import React from 'react';
-import { PlaygroundProvider } from '../context/PlaygroundContext';
+import React, { useState } from 'react';
+import { PlaygroundProvider, usePlayground } from '../context/PlaygroundContext';
 import BackgroundGrid from '../components/ui/BackgroundGrid';
 import BezierCurve from '../components/ui/BezierCurve';
 import Navbar from '../components/ui/Navbar';
@@ -14,13 +14,18 @@ import SaveButton from '../components/ui/SaveButton';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import SaveModal from '../components/ui/SaveModal';
 import DraggablePanel from '../components/ui/DraggablePanel';
+import SettingsModal from '../components/ui/SettingsModal';
+import type { SettingsCategoryId } from '../types/settings';
 
 // ─────────────────────────────────────────────
 //  PlaygroundPage – assembles the full editor UI
 // ─────────────────────────────────────────────
 
-const PlaygroundPage: React.FC = () => (
-  <PlaygroundProvider>
+const PlaygroundInner: React.FC = () => {
+  const { isSettingsModalOpen, setSettingsModalOpen } = usePlayground();
+  const [activeTab, setActiveTab] = useState<SettingsCategoryId>('general');
+
+  return (
     <div className="playground">
       {/* Full-page SVG dot-grid background */}
       <BackgroundGrid />
@@ -67,7 +72,20 @@ const PlaygroundPage: React.FC = () => (
       </div>
 
       <SaveModal />
+
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setSettingsModalOpen(false)}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
     </div>
+  );
+};
+
+const PlaygroundPage: React.FC = () => (
+  <PlaygroundProvider>
+    <PlaygroundInner />
   </PlaygroundProvider>
 );
 
