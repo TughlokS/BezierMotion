@@ -65,6 +65,8 @@ interface PlaygroundState {
   cancelViewReset: () => void;
   snapToGrid: boolean;
   setSnapToGrid: (v: boolean) => void;
+  snapStep: number;
+  setSnapStep: (v: number) => void;
   activeHandle: 'p1' | 'p2' | null;
   setActiveHandle: (h: 'p1' | 'p2' | null) => void;
   hoveredHandle: 'p1' | 'p2' | null;
@@ -195,6 +197,18 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [zoom, setZoom] = useState(1);
   const [isResettingView, setIsResettingView] = useState(false);
   const [snapToGrid, setSnapToGrid] = useState(false);
+  const [snapStep, setSnapStep] = useState<number>(() => {
+    const stored = localStorage.getItem('app-grid-snap-step');
+    if (stored) {
+      const parsed = parseFloat(stored);
+      if ([0.5, 0.25, 0.1, 0.05, 0.025].includes(parsed)) return parsed;
+    }
+    return 0.1;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('app-grid-snap-step', snapStep.toString());
+  }, [snapStep]);
 
   // Refs mirror current view state so resetView() can stay a stable callback.
   const zoomRef = useRef(zoom);   zoomRef.current = zoom;
@@ -277,6 +291,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       zoom, setZoom,
       canResetView, isResettingView, resetView, cancelViewReset,
       snapToGrid, setSnapToGrid,
+      snapStep, setSnapStep,
       activeHandle, setActiveHandle,
       hoveredHandle, setHoveredHandle,
       isSaveModalOpen, setSaveModalOpen,

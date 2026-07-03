@@ -40,10 +40,12 @@ const BezierCurve: React.FC = () => {
     panOffsetXPx, setPanOffsetXPx,
     zoom, setZoom,
     isResettingView, cancelViewReset,
-    snapToGrid, activeHandle, setActiveHandle, setHoveredHandle,
+    snapToGrid, snapStep, activeHandle, setActiveHandle, setHoveredHandle,
   } = usePlayground();
   const snapToGridRef = useRef(snapToGrid);
   snapToGridRef.current = snapToGrid;
+  const snapStepRef = useRef(snapStep);
+  snapStepRef.current = snapStep;
   const svgRef = useRef<SVGSVGElement>(null);
 
   // Viewport size
@@ -153,7 +155,7 @@ const BezierCurve: React.FC = () => {
         const u   = unitPxRef.current;
         const bx  = (e.clientX - dragOffset.current.x - ox) / u;
         const by  = (oy - (e.clientY - dragOffset.current.y)) / u;
-        const snap = (v: number) => snapToGridRef.current ? Math.round(v / 0.1) * 0.1 : v;
+        const snap = (v: number) => snapToGridRef.current ? Math.round(v / snapStepRef.current) * snapStepRef.current : v;
         const clampedX = Math.max(0, Math.min(1, snap(bx)));
         const snappedY = snap(by);
         if (dragging.current === 'p1') setCurveValues([clampedX, snappedY, cx2, cy2]);
