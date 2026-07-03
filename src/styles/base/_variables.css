@@ -12,8 +12,8 @@
   --color-brand-light:      #fef0ee; /* Very pale coral for subtle panel hovers */
   --color-brand-base-rgb:   245, 113, 95; /* RGB channels for alpha compositing */
 
-  --color-brand-wash:       rgba(245, 113, 95, 0.08); /* Transparent coral for icon backgrounds */
-  --color-brand-wash-hover: rgba(245, 113, 95, 0.2);
+  --color-brand-wash:       rgba(var(--color-brand-base-rgb), 0.08); /* Transparent brand color for icon backgrounds */
+  --color-brand-wash-hover: rgba(var(--color-brand-base-rgb), 0.2);
 
   /* ──────────────────────────────────────────
      Neutrals & Framework
