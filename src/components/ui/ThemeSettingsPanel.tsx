@@ -92,13 +92,6 @@ export const ThemeSettingsPanel: React.FC = () => {
             >
               Dark
             </button>
-            <button
-              type="button"
-              className={`segmented-control__btn ${themeMode === 'auto' ? 'is-active' : ''}`}
-              onClick={(e) => setThemeMode('auto', e.currentTarget)}
-            >
-              Auto
-            </button>
           </div>
         </SettingsRow>
       </div>
