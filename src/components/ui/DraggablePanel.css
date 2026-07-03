@@ -85,12 +85,7 @@
 /* Lifted shadow on the child panel while dragging */
 .draggable-panel--dragging .anim-panel,
 .draggable-panel--dragging .presets-panel {
-  box-shadow: var(--shadow-lg), 0 16px 48px rgba(0, 0, 0, 0.18);
-}
-
-[data-theme="dark"] .draggable-panel--dragging .anim-panel,
-[data-theme="dark"] .draggable-panel--dragging .presets-panel {
-  box-shadow: var(--shadow-lg), 0 16px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--shadow-lg), 0 16px 48px var(--elevation-drag);
 }
 
 /* Settling: smooth spring-back */
@@ -115,7 +110,7 @@
 /* Glows brighter when the dragged panel is within snap range */
 .drag-ghost--near-snap {
   opacity: 0.75;
-  box-shadow: 0 0 0 1px var(--color-brand-base), 0 0 20px rgba(53, 124, 208, 0.4);
+  box-shadow: 0 0 0 1px var(--color-brand-base), 0 0 20px var(--elevation-snap-glow);
 }
 
 @keyframes ghostFadeIn {

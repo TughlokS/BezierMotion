@@ -25,15 +25,11 @@
   background: var(--color-bg-base);
   color: var(--color-text-main);
   border: 1px solid var(--color-border-main);
-  box-shadow: var(--shadow-md), 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-md), 0 8px 16px var(--elevation-component);
   padding: 12px 20px;
   border-radius: 12px;
   font-size: 0.9rem;
   font-weight: 600;
   font-family: var(--font-sans);
   text-align: center;
-}
-
-[data-theme="dark"] .toast-content {
-  box-shadow: var(--shadow-md), 0 8px 16px rgba(0,0,0,0.4);
 }

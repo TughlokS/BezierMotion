@@ -15,6 +15,16 @@ const DOT_BASE_R     = 1.5;
 const EFFECT_RADIUS  = 140; // px – how far the ripple reaches (screen-space, zoom-independent)
 const MAX_MULTIPLIER = 2;   // centre dot grows to 2× base size
 
+/** Resolve CSS custom properties from :root once, returning resolved color strings. */
+function resolveThemeColors() {
+  const rootStyles = getComputedStyle(document.documentElement);
+  return {
+    bg:       rootStyles.getPropertyValue('--color-bg-subtle').trim()    || '#edeff0',
+    dot:      rootStyles.getPropertyValue('--color-border-dark').trim()  || '#b0b9ca',
+    gridLine: rootStyles.getPropertyValue('--color-grid-line').trim()    || 'rgba(0, 0, 0, 0.05)',
+  };
+}
+
 const BackgroundGrid: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouse     = useRef({ x: -9999, y: -9999 });
@@ -23,6 +33,9 @@ const BackgroundGrid: React.FC = () => {
   const panRef    = useRef(0);
   const panXRef   = useRef(0);
   const zoomRef   = useRef(1);
+
+  // Resolved theme colors (updated on mount + theme toggle)
+  const colorsRef = useRef(resolveThemeColors());
 
   const { panOffsetPx, panOffsetXPx, zoom } = usePlayground();
   panRef.current  = panOffsetPx;
@@ -47,15 +60,20 @@ const BackgroundGrid: React.FC = () => {
     window.addEventListener('mousemove', onMove);
     document.addEventListener('mouseleave', onLeave);
 
+    /* Observe theme changes on the root element to re-resolve CSS variables */
+    const observer = new MutationObserver(() => {
+      colorsRef.current = resolveThemeColors();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+
     /* Draw loop */
     const draw = () => {
       const { width: w, height: h } = canvas;
       const { x: mx, y: my }        = mouse.current;
-
-      // Extract current theme colors from standard CSS variables
-      const rootStyles = getComputedStyle(document.documentElement);
-      const bgColor = rootStyles.getPropertyValue('--color-bg-subtle').trim() || '#f5f5fb';
-      const dotColor = rootStyles.getPropertyValue('--color-border-dark').trim() || '#ddceddff';
+      const { bg: bgColor, dot: dotColor, gridLine: gridLineColor } = colorsRef.current;
 
       /* Background fill */
       ctx.fillStyle = bgColor;
@@ -85,9 +103,7 @@ const BackgroundGrid: React.FC = () => {
       ctx.moveTo(p3x, 0);
       ctx.lineTo(p3x, h);
 
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      // Slightly lighter than background, but not fully white
-      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'; 
+      ctx.strokeStyle = gridLineColor;
       ctx.lineWidth = 4;
       ctx.stroke();
 
@@ -122,6 +138,7 @@ const BackgroundGrid: React.FC = () => {
 
     return () => {
       cancelAnimationFrame(raf.current);
+      observer.disconnect();
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseleave', onLeave);
@@ -138,4 +155,3 @@ const BackgroundGrid: React.FC = () => {
 };
 
 export default BackgroundGrid;
-

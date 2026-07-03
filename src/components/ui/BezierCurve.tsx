@@ -28,7 +28,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 
 // Style tokens
 const CLR_CURVE       = 'var(--color-brand-base)';
-const CLR_ENDPOINT    = '#ffffff';
+const CLR_ENDPOINT    = 'var(--fg-endpoint)';
 const CLR_HANDLE      = 'var(--color-brand-base)';
 const CLR_HANDLE_LINE = 'var(--color-border-dark)';
 const CLR_LABEL       = 'var(--color-text-muted)';
@@ -308,10 +308,10 @@ const BezierCurve: React.FC = () => {
         </g>
 
         {/* ── Fixed endpoint P0 (0,0) ── */}
-        <motion.circle cx={p0.x} cy={p0.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.2))' }} animate={{ cx: p0.x, cy: p0.y }} transition={animTransition} />
+        <motion.circle cx={p0.x} cy={p0.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px var(--elevation-component))' }} animate={{ cx: p0.x, cy: p0.y }} transition={animTransition} />
 
         {/* ── Fixed endpoint P3 (1,1) ── */}
-        <motion.circle cx={p3.x} cy={p3.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.2))' }} animate={{ cx: p3.x, cy: p3.y }} transition={animTransition} />
+        <motion.circle cx={p3.x} cy={p3.y} r={8} fill={CLR_ENDPOINT} style={{ filter: 'drop-shadow(0px 3px 8px var(--elevation-component))' }} animate={{ cx: p3.x, cy: p3.y }} transition={animTransition} />
 
         {/* ── Draggable control handles — topHandle renders last (on top in SVG) ── */}
         {([topHandle === 'p2' ? 'p1' : 'p2', topHandle] as const).map(h => {

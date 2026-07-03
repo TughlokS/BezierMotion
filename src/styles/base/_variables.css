@@ -6,13 +6,14 @@
   /* ──────────────────────────────────────────
      Brand & Accents
      ────────────────────────────────────────── */
-  --color-brand-base:   #f5715f; /* Primary blue used for curves, active states, main buttons */
-  --color-brand-hover:  #2a6ac0; /* Darker blue for hover states */
-  --color-brand-active: #777777; /* Deep navy blue used for morphed hover states & endpoints */
-  --color-brand-light:  #f0f6ff; /* Very pale blue used for subtle panel hovers */
-  
-  --color-brand-wash:   rgba(53, 124, 208, 0.08); /* Transparent blue for icon backgrounds */
-  --color-brand-wash-hover: rgba(53, 124, 208, 0.2);
+  --color-brand-base:       #f5715f; /* Primary coral used for curves, active states, main buttons */
+  --color-brand-hover:      #e05a48; /* Darker coral for hover states */
+  --color-brand-active:     #cc4b3a; /* Deep coral for pressed / active states */
+  --color-brand-light:      #fef0ee; /* Very pale coral for subtle panel hovers */
+  --color-brand-base-rgb:   245, 113, 95; /* RGB channels for alpha compositing */
+
+  --color-brand-wash:       rgba(245, 113, 95, 0.08); /* Transparent coral for icon backgrounds */
+  --color-brand-wash-hover: rgba(245, 113, 95, 0.2);
 
   /* ──────────────────────────────────────────
      Neutrals & Framework
@@ -20,7 +21,7 @@
   /* Backgrounds */
   --color-bg-base:      #ffffff;
   --color-bg-subtle:    #edeff0; /* Very light grey for top controls hover */
-  --color-bg-inset:     #EEF5FC; /* Light blue-grey for duration inputs */
+  --color-bg-inset:     #fdf5f4; /* Warm neutral for duration inputs */
 
   /* Text & Content */
   --color-text-main:    #4b5466; /* Darkest text (headings, active names) */
@@ -35,21 +36,45 @@
   --color-border-dark:  #b0b9ca;    /* Slightly darker separators (curve values) */
 
   /* ──────────────────────────────────────────
+     Overlays & Backdrops
+     ────────────────────────────────────────── */
+  --bg-overlay-subtle:        rgba(0, 0, 0, 0.035);
+  --bg-overlay-subtle-hover:  rgba(0, 0, 0, 0.06);
+  --bg-backdrop:              rgba(0, 0, 0, 0.4);
+
+  /* ──────────────────────────────────────────
+     Foreground (endpoints, icons, interactive)
+     ────────────────────────────────────────── */
+  --fg-endpoint:          #ffffff;
+  --fg-icon-muted:        #a0a0c0;
+  --fg-active-icon:       rgba(255, 255, 255, 0.85);
+  --fg-active-icon-bg:    rgba(255, 255, 255, 0.2);
+
+  /* ──────────────────────────────────────────
+     Grid (resolved at runtime by Canvas API)
+     ────────────────────────────────────────── */
+  --color-grid-line:    rgba(0, 0, 0, 0.05);
+
+  /* ──────────────────────────────────────────
      Typography
      ────────────────────────────────────────── */
   --font-sans:   'Inter', system-ui, -apple-system, sans-serif;
   --font-mono:   'Fira Code', 'Cascadia Code', monospace;
 
   /* ──────────────────────────────────────────
-     Shadows
+     Elevation & Shadows
      ────────────────────────────────────────── */
   --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md:      0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.12);
-  
-  --shadow-brand-sm: 0 4px 12px rgba(53, 124, 208, 0.15);
-  --shadow-brand-md: 0 6px 16px rgba(53, 124, 208, 0.3);
-  --shadow-brand-lg: 0 10px 36px rgba(53, 124, 208, 0.45);
+
+  --shadow-brand-sm: 0 4px 12px rgba(245, 113, 95, 0.15);
+  --shadow-brand-md: 0 6px 16px rgba(245, 113, 95, 0.3);
+  --shadow-brand-lg: 0 10px 36px rgba(245, 113, 95, 0.45);
+
+  --elevation-component:  rgba(0, 0, 0, 0.1);
+  --elevation-drag:       rgba(0, 0, 0, 0.18);
+  --elevation-snap-glow:  rgba(245, 113, 95, 0.4);
 }
 
 /* ──────────────────────────────────────────
@@ -59,7 +84,7 @@
   /* Backgrounds */
   --color-bg-base:      #1c1e24; /* Very dark slate, almost black */
   --color-bg-subtle:    #16191f; /* Slightly lighter surface */
-  --color-bg-inset:     #1a1d24; /* Deeper inset background */
+  --color-bg-inset:     #0f1115; /* Deeper inset background */
 
   /* Text & Content */
   --color-text-main:    #f0f2f5; /* Off-white for highest contrast */
@@ -73,7 +98,21 @@
   --color-border-light: #2b2e33; /* Internal separators */
   --color-border-dark:  #3b4252; /* Curve value separators / dot grid */
 
-  /* Shadows – dark mode: borders carry the separation, shadows just hint at elevation */
+  /* Overlays & Backdrops */
+  --bg-overlay-subtle:        rgba(255, 255, 255, 0.04);
+  --bg-overlay-subtle-hover:  rgba(255, 255, 255, 0.07);
+  --bg-backdrop:              rgba(0, 0, 0, 0.7);
+
+  /* Foreground */
+  --fg-endpoint:          #ffffff;
+  --fg-icon-muted:        #6b7394;
+  --fg-active-icon:       rgba(15, 17, 21, 0.85);
+  --fg-active-icon-bg:    rgba(255, 255, 255, 0.9);
+
+  /* Grid */
+  --color-grid-line:    rgba(255, 255, 255, 0.05);
+
+  /* Elevation & Shadows */
   --shadow-sm:      0 1px 4px rgba(0, 0, 0, 0.25);
   --shadow-md:      0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-lg:      0 4px 16px rgba(0, 0, 0, 0.35);
@@ -81,4 +120,8 @@
   --shadow-brand-sm: 0 4px 12px rgba(245, 113, 95, 0.12);
   --shadow-brand-md: 0 6px 16px rgba(245, 113, 95, 0.2);
   --shadow-brand-lg: 0 10px 36px rgba(245, 113, 95, 0.3);
+
+  --elevation-component:  rgba(0, 0, 0, 0.4);
+  --elevation-drag:       rgba(0, 0, 0, 0.5);
+  --elevation-snap-glow:  rgba(245, 113, 95, 0.4);
 }
