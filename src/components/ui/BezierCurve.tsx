@@ -376,7 +376,7 @@ const BezierCurve: React.FC = () => {
           </text>
         </motion.g>
 
-        {/* ── PROGRESS (X) axis label ── */}
+        {/* ── TIME (T) axis label ── */}
         <text
           x={labelProgressX} y={labelProgressY}
           textAnchor="middle"
@@ -385,10 +385,10 @@ const BezierCurve: React.FC = () => {
           letterSpacing="0.14em"
           style={{ pointerEvents: 'none' }}
         >
-          PROGRESS (X)
+          TIME (T)
         </text>
 
-        {/* ── TIME (T) axis label – rotated 90° CCW ── */}
+        {/* ── PROGRESS (Y) axis label – rotated 90° CCW ── */}
         <text
           x={labelTimeX} y={labelTimeY}
           textAnchor="middle"
@@ -398,7 +398,7 @@ const BezierCurve: React.FC = () => {
           transform={`rotate(-90 ${labelTimeX} ${labelTimeY})`}
           style={{ pointerEvents: 'none' }}
         >
-          TIME (T)
+          PROGRESS (Y)
         </text>
       </svg>
     </>
