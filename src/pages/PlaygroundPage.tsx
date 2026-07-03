@@ -15,6 +15,7 @@ import ThemeToggle from '../components/ui/ThemeToggle';
 import SaveModal from '../components/ui/SaveModal';
 import DraggablePanel from '../components/ui/DraggablePanel';
 import SettingsModal from '../components/ui/SettingsModal';
+import InfoModal from '../components/ui/InfoModal';
 import type { SettingsCategoryId } from '../types/settings';
 
 // ─────────────────────────────────────────────
@@ -22,7 +23,7 @@ import type { SettingsCategoryId } from '../types/settings';
 // ─────────────────────────────────────────────
 
 const PlaygroundInner: React.FC = () => {
-  const { isSettingsModalOpen, setSettingsModalOpen } = usePlayground();
+  const { isSettingsModalOpen, setSettingsModalOpen, isInfoModalOpen, setInfoModalOpen } = usePlayground();
   const [activeTab, setActiveTab] = useState<SettingsCategoryId>('general');
 
   return (
@@ -78,6 +79,11 @@ const PlaygroundInner: React.FC = () => {
         onClose={() => setSettingsModalOpen(false)}
         activeTab={activeTab}
         onTabChange={setActiveTab}
+      />
+
+      <InfoModal
+        isOpen={isInfoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
       />
     </div>
   );

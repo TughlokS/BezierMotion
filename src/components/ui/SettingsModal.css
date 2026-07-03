@@ -130,14 +130,15 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto;
+  overflow: hidden;
   background-color: var(--color-bg-base);
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .settings-close-btn {
-  position: absolute;
-  bottom: 40px;
-  right: 48px;
+  align-self: flex-end;
+  margin-top: 16px;
   padding: 8px 22px;
   border: 1px solid var(--color-border-dark);
   background-color: var(--color-bg-base);
@@ -147,6 +148,7 @@
   font-size: 13px;
   font-weight: 500;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .settings-close-btn:hover {
@@ -159,6 +161,15 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  flex: 1;
+  min-height: 0;
+  box-sizing: border-box;
+}
+
+.theme-settings-panel__body {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 8px;
 }
 
 .theme-settings-panel__title {
@@ -167,6 +178,7 @@
   color: var(--color-brand-base);
   margin: 0 0 24px 0;
   letter-spacing: -0.02em;
+  flex-shrink: 0;
 }
 
 .theme-settings-panel__section {
@@ -272,7 +284,7 @@
 .accent-color-preview-wrap {
   width: 220px;
   height: 44px;
-  background-color: var(--color-bg-inset);
+  background-color: var(--color-border-light);
   border: 1px solid var(--color-border-main);
   border-radius: 100px;
   padding: 6px;
@@ -280,10 +292,6 @@
   display: flex;
   align-items: stretch;
   justify-content: stretch;
-}
-
-[data-theme="dark"] .accent-color-preview-wrap {
-  background-color: #252932;
 }
 
 .accent-color-preview-btn {
@@ -337,7 +345,7 @@
 /* Segmented Control Component */
 .segmented-control {
   display: flex;
-  background-color: var(--color-bg-inset);
+  background-color: var(--color-border-light);
   border: 1px solid var(--color-border-main);
   border-radius: 100px;
   padding: 6px;
@@ -345,10 +353,6 @@
   width: 220px;
   height: 44px;
   box-sizing: border-box;
-}
-
-[data-theme="dark"] .segmented-control {
-  background-color: #252932;
 }
 
 .segmented-control__btn {
@@ -416,7 +420,7 @@
 
 .slider-track-container {
   position: relative;
-  height: 36px;
+  height: 44px;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -433,8 +437,8 @@
   position: absolute;
   left: 0;
   right: 0;
-  height: 32px;
-  border-radius: 16px;
+  height: 44px;
+  border-radius: 22px;
   pointer-events: none;
   background-color: var(--slider-inactive-track);
 }
@@ -443,9 +447,9 @@
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 28px;
-  height: 18px;
-  border-radius: 9px;
+  width: 56px;
+  height: 32px;
+  border-radius: 100px;
   background-color: var(--color-brand-base);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
   pointer-events: auto;

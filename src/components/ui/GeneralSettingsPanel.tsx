@@ -31,7 +31,7 @@ export const GeneralSettingsPanel: React.FC = () => {
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!trackRef.current) return;
       const trackRect = trackRef.current.getBoundingClientRect();
-      const trackWidth = trackRect.width - 42; // travel bounds (width - 2 * padding)
+      const trackWidth = trackRect.width - 68; // travel bounds (width - 2 * padding)
       if (trackWidth <= 0) return;
 
       const deltaX = moveEvent.clientX - startXRef.current;
@@ -66,7 +66,7 @@ export const GeneralSettingsPanel: React.FC = () => {
     const handleTouchMove = (moveEvent: TouchEvent) => {
       if (!trackRef.current) return;
       const trackRect = trackRef.current.getBoundingClientRect();
-      const trackWidth = trackRect.width - 42;
+      const trackWidth = trackRect.width - 68;
       if (trackWidth <= 0) return;
 
       const deltaX = moveEvent.touches[0].clientX - startXRef.current;
@@ -95,8 +95,8 @@ export const GeneralSettingsPanel: React.FC = () => {
   const handleTrackMouseDown = (e: React.MouseEvent) => {
     if (!trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left - 21; // offset relative to padding
-    const trackWidth = rect.width - 42;
+    const clickX = e.clientX - rect.left - 34; // offset relative to padding
+    const trackWidth = rect.width - 68;
     if (trackWidth <= 0) return;
     const pct = Math.max(0, Math.min(100, (clickX / trackWidth) * 100));
     
@@ -128,57 +128,59 @@ export const GeneralSettingsPanel: React.FC = () => {
     <div className="general-settings-panel">
       <h1 className="theme-settings-panel__title">General Settings</h1>
 
-      <div className="theme-settings-panel__section">
-        <h2 className="theme-settings-panel__section-header">Grid</h2>
+      <div className="theme-settings-panel__body">
+        <div className="theme-settings-panel__section">
+          <h2 className="theme-settings-panel__section-header">Grid</h2>
 
-        <SettingsRow 
-          title="Grid Snapping Steps" 
-          description="Choose at what intervals the control points snaps to grid"
-        >
-          <div className={`slider-wrapper ${isDragging ? 'is-dragging' : ''}`}>
-            <div 
-              ref={trackRef}
-              className="slider-track-container"
-              onMouseDown={handleTrackMouseDown}
-              onKeyDown={handleKeyDown}
-              tabIndex={0}
-              role="slider"
-              aria-label="Grid Snapping Steps"
-              aria-valuemin={0.025}
-              aria-valuemax={0.5}
-              aria-valuenow={snapStep}
-            >
-              <div className="slider-track" />
-
+          <SettingsRow 
+            title="Grid Snapping Steps" 
+            description="Choose at what intervals the control points snaps to grid"
+          >
+            <div className={`slider-wrapper ${isDragging ? 'is-dragging' : ''}`}>
               <div 
-                className="slider-custom-thumb" 
-                style={{ left: `calc(21px + (${inputValue} / 100) * (100% - 42px))` }}
-                onMouseDown={handleThumbMouseDown}
-                onTouchStart={handleThumbTouchStart}
-              />
-            </div>
+                ref={trackRef}
+                className="slider-track-container"
+                onMouseDown={handleTrackMouseDown}
+                onKeyDown={handleKeyDown}
+                tabIndex={0}
+                role="slider"
+                aria-label="Grid Snapping Steps"
+                aria-valuemin={0.025}
+                aria-valuemax={0.5}
+                aria-valuenow={snapStep}
+              >
+                <div className="slider-track" />
 
-            <div className="slider-labels">
-              {SNAP_STEPS.map((step, i) => {
-                const labelPct = (i / (SNAP_STEPS.length - 1)) * 100;
-                const closestIndex = Math.round(inputValue / 25);
-                return (
-                  <span 
-                    key={i} 
-                    className={`slider-label ${i === closestIndex ? 'is-active' : ''}`}
-                    style={{ left: `calc(21px + (${labelPct} / 100) * (100% - 42px))` }}
-                    onClick={() => {
-                      setSnapStep(step);
-                      setInputValue(i * 25);
-                    }}
-                  >
-                    {step}
-                  </span>
-                );
-              })}
+                <div 
+                  className="slider-custom-thumb" 
+                  style={{ left: `calc(34px + (${inputValue} / 100) * (100% - 68px))` }}
+                  onMouseDown={handleThumbMouseDown}
+                  onTouchStart={handleThumbTouchStart}
+                />
+              </div>
+
+              <div className="slider-labels">
+                {SNAP_STEPS.map((step, i) => {
+                  const labelPct = (i / (SNAP_STEPS.length - 1)) * 100;
+                  const closestIndex = Math.round(inputValue / 25);
+                  return (
+                    <span 
+                      key={i} 
+                      className={`slider-label ${i === closestIndex ? 'is-active' : ''}`}
+                      style={{ left: `calc(34px + (${labelPct} / 100) * (100% - 68px))` }}
+                      onClick={() => {
+                        setSnapStep(step);
+                        setInputValue(i * 25);
+                      }}
+                    >
+                      {step}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </SettingsRow>
+          </SettingsRow>
+        </div>
       </div>
     </div>
   );

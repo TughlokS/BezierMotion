@@ -75,6 +75,8 @@ interface PlaygroundState {
   setSaveModalOpen: (v: boolean) => void;
   isSettingsModalOpen: boolean;
   setSettingsModalOpen: (v: boolean) => void;
+  isInfoModalOpen: boolean;
+  setInfoModalOpen: (v: boolean) => void;
   activeColor: string;
   setActiveColor: (v: string) => void;
   themeMode: 'light' | 'dark' | 'auto';
@@ -88,6 +90,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [curveValues, setCurveValues] = useState<[number, number, number, number]>([0.42, 0, 0.58, 1]);
   const [duration, setDuration] = useState(0.5);
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const { activeColor, setActiveColor } = useThemeColor('coral');
 
   const [themeMode, setThemeModeState] = useState<'light' | 'dark' | 'auto'>(() => {
@@ -296,6 +299,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       hoveredHandle, setHoveredHandle,
       isSaveModalOpen, setSaveModalOpen,
       isSettingsModalOpen, setSettingsModalOpen,
+      isInfoModalOpen, setInfoModalOpen,
       activeColor, setActiveColor,
       themeMode, isDarkResolved, setThemeMode,
     }}>

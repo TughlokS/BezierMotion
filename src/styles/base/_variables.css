@@ -22,6 +22,7 @@
   --color-bg-base:      #ffffff;
   --color-bg-subtle:    #edeff0; /* Very light grey for top controls hover */
   --color-bg-inset:     #fdf5f4; /* Warm neutral for duration inputs */
+  --color-bg-card-subtle: #f8f8fa; /* Softer, slightly darker card background in light mode */
 
   /* Text & Content */
   --color-text-main:    #4b5466; /* Darkest text (headings, active names) */
@@ -122,4 +123,5 @@
   --elevation-component:  rgba(0, 0, 0, 0.4);
   --elevation-drag:       rgba(0, 0, 0, 0.5);
   --elevation-snap-glow:  rgba(245, 113, 95, 0.4);
+  --color-bg-card-subtle: var(--color-bg-subtle); /* Slightly darker slate in dark mode */
 }
