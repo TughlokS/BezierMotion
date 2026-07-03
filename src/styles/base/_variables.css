@@ -47,8 +47,8 @@
      ────────────────────────────────────────── */
   --fg-endpoint:          #ffffff;
   --fg-icon-muted:        #a0a0c0;
-  --fg-active-icon:       rgba(255, 255, 255, 0.85);
-  --fg-active-icon-bg:    rgba(255, 255, 255, 0.2);
+  --fg-active-icon:       color-mix(in srgb, var(--color-bg-base) 85%, transparent);
+  --fg-active-icon-bg:    color-mix(in srgb, var(--color-bg-base) 20%, transparent);
 
   /* ──────────────────────────────────────────
      Grid (resolved at runtime by Canvas API)
@@ -106,8 +106,6 @@
   /* Foreground */
   --fg-endpoint:          #ffffff;
   --fg-icon-muted:        #6b7394;
-  --fg-active-icon:       rgba(15, 17, 21, 0.85);
-  --fg-active-icon-bg:    rgba(255, 255, 255, 0.9);
 
   /* Grid */
   --color-grid-line:    rgba(255, 255, 255, 0.05);
