@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { usePlayground } from '../../context/PlaygroundContext';
 import { BEZIER_UNIT_PX, ZOOM_MIN, ZOOM_MAX, ZOOM_SENSITIVITY } from '../../constants';
-import { computeView } from '../../utils/viewTransform';
+import { computeView, snapToDot } from '../../utils/viewTransform';
 
 // ─────────────────────────────────────────────
 //  BezierCurve – interactive SVG overlay with pan + scroll-wheel zoom
@@ -13,8 +13,9 @@ import { computeView } from '../../utils/viewTransform';
 //    Max down: bezier Y=-3 at screen centre → +3.5 units
 // ─────────────────────────────────────────────
 
-const PAN_UNITS_MIN = -2.5; // units – max pan up   (× unitPx at current zoom)
-const PAN_UNITS_MAX =  3.5; // units – max pan down (× unitPx at current zoom)
+// Dynamic vertical pan limits:
+// - Panning up (negative panY) stops when P0 (0,0) hits top of screen (originY = 0)
+// - Panning down (positive panY) stops when P3 (1,1) hits bottom of screen (originY - unitPx = h)
 
 // Universal horizontal pan (works at any zoom): allowed until the canvas is
 // fully off-screen, detected by the opposite anchor reaching the far edge —
@@ -173,7 +174,10 @@ const BezierCurve: React.FC = () => {
         // ── Y-axis pan (2× speed; limits scale with zoom so travel stays constant) ──
         const dy = (e.clientY - lastPanY.current) * 2;
         lastPanY.current = e.clientY;
-        const nextY = clamp(panOffsetPxRef.current + dy, PAN_UNITS_MIN * u, PAN_UNITS_MAX * u);
+        const baseOriginY = snapToDot(vpRef.current.h / 2 + BEZIER_UNIT_PX / 2);
+        const panYMin = -baseOriginY;
+        const panYMax = vpRef.current.h + u - baseOriginY;
+        const nextY = clamp(panOffsetPxRef.current + dy, panYMin, panYMax);
         panOffsetPxRef.current = nextY;
         setPanOffsetPx(nextY);
       }
@@ -228,7 +232,9 @@ const BezierCurve: React.FC = () => {
       const oy0 = originYRef.current;
       const baseY = oy0 - panOffsetPxRef.current; // = baseOriginY (Y is base + pan)
       const oy1 = sy - (sy - oy0) * k;
-      const panY1 = clamp(oy1 - baseY, PAN_UNITS_MIN * newUnitPx, PAN_UNITS_MAX * newUnitPx);
+      const panYMin = -baseY;
+      const panYMax = vpRef.current.h + newUnitPx - baseY;
+      const panY1 = clamp(oy1 - baseY, panYMin, panYMax);
 
       // X: no cursor drift — the box is centred by construction (panX = 0 stays
       // centred through zoom). Preserve any manual pan, re-clamped to the new
