@@ -105,7 +105,7 @@
   --bg-backdrop:              rgba(0, 0, 0, 0.7);
 
   /* Foreground */
-  --fg-endpoint:          #ffffff;
+  --fg-endpoint:          var(--color-border-light);
   --fg-icon-muted:        #6b7394;
 
   /* Grid */
