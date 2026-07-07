@@ -292,6 +292,25 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     }
   };
 
+  useEffect(() => {
+    if (!selectedPresetId) return;
+    const activePreset = presets.find(p => p.id === selectedPresetId);
+    if (!activePreset) {
+      setSelectedPresetId(null);
+      return;
+    }
+    const { cp1, cp2 } = activePreset.bezierValue;
+    const isMatch = (
+      Math.abs(cp1.X - curveValues[0]) < 1e-4 &&
+      Math.abs(cp1.Y - curveValues[1]) < 1e-4 &&
+      Math.abs(cp2.X - curveValues[2]) < 1e-4 &&
+      Math.abs(cp2.Y - curveValues[3]) < 1e-4
+    );
+    if (!isMatch) {
+      setSelectedPresetId(null);
+    }
+  }, [curveValues, selectedPresetId, presets]);
+
   return (
     <PlaygroundContext.Provider value={{
       curveValues, setCurveValues,
