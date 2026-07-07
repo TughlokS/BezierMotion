@@ -4,6 +4,7 @@ import { flushSync } from 'react-dom';
 import { useAnimationEngine } from '../hooks/useAnimationEngine';
 import { useLocalStorage } from '../hooks';
 import { useThemeColor } from '../hooks/useThemeColor';
+import type { CopyFormat } from '../types/settings';
 
 
 // localStorage key for user-saved (custom) presets — defaults stay in code
@@ -83,6 +84,10 @@ interface PlaygroundState {
   themeMode: 'light' | 'dark' | 'auto';
   isDarkResolved: boolean;
   setThemeMode: (mode: 'light' | 'dark' | 'auto', triggerElement: HTMLElement | null) => void;
+  copyFormat: CopyFormat;
+  setCopyFormat: (format: CopyFormat) => void;
+  noSpaces: boolean;
+  setNoSpaces: (noSpaces: boolean) => void;
 }
 
 const PlaygroundContext = createContext<PlaygroundState | undefined>(undefined);
@@ -93,6 +98,23 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isSettingsModalOpen, setSettingsModalOpen] = useState(false);
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const { activeColor, setActiveColor } = useThemeColor('coral');
+
+  const [copyFormat, setCopyFormatState] = useState<CopyFormat>(() => {
+    return (localStorage.getItem('setting-copy-format') as CopyFormat) || 'css';
+  });
+  const [noSpaces, setNoSpacesState] = useState<boolean>(() => {
+    return localStorage.getItem('setting-no-spaces') === 'true';
+  });
+
+  const setCopyFormat = (format: CopyFormat) => {
+    setCopyFormatState(format);
+    localStorage.setItem('setting-copy-format', format);
+  };
+
+  const setNoSpaces = (ns: boolean) => {
+    setNoSpacesState(ns);
+    localStorage.setItem('setting-no-spaces', String(ns));
+  };
 
   const [themeMode, setThemeModeState] = useState<'light' | 'dark' | 'auto'>(() => {
     return (localStorage.getItem('theme-mode') as 'light' | 'dark' | 'auto') || 'auto';
@@ -329,6 +351,8 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       isInfoModalOpen, setInfoModalOpen,
       activeColor, setActiveColor,
       themeMode, isDarkResolved, setThemeMode,
+      copyFormat, setCopyFormat,
+      noSpaces, setNoSpaces,
     }}>
       {children}
     </PlaygroundContext.Provider>

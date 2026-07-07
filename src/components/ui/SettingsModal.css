@@ -564,3 +564,204 @@
     justify-content: flex-start;
   }
 }
+
+/* ══════════════════════════════════════════
+   Copy Format & Checkbox Style Layouts
+   ══════════════════════════════════════════ */
+.copy-format-dropdown {
+  position: relative;
+  width: 220px;
+  height: 44px;
+  background-color: var(--color-border-light);
+  border: 1px solid var(--color-border-main);
+  border-radius: 100px;
+  box-sizing: border-box;
+  padding: 0;
+  display: flex;
+}
+
+.copy-format-dropdown__btn {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 18px;
+  background: transparent;
+  border: none;
+  color: var(--color-brand-base);
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: 100px;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.1s ease;
+}
+
+.copy-format-dropdown__btn:active {
+  transform: scale(0.98);
+}
+
+.copy-format-dropdown__btn:focus-visible {
+  outline: 2px solid var(--color-brand-base);
+}
+
+.chevron-icon {
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+  font-size: 14px;
+}
+.chevron-icon.is-open {
+  transform: rotate(180deg);
+}
+
+.copy-format-dropdown__popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 220px;
+  box-sizing: border-box;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-border-main);
+  border-radius: 22px;
+  padding: 8px;
+  box-shadow: var(--shadow-lg), 0 10px 24px var(--elevation-component);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1010;
+  animation: popoverFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.copy-format-dropdown__option {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-main);
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.copy-format-dropdown__option:hover,
+.copy-format-dropdown__option:focus-visible {
+  background-color: var(--bg-overlay-subtle);
+}
+
+.copy-format-dropdown__option.is-selected {
+  background-color: var(--color-brand-base);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Checkbox Style Architecture */
+.theme-checkbox-container {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+}
+
+.theme-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-checkbox-box {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--color-border-dark);
+  border-radius: 6px;
+  background-color: var(--color-bg-base);
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.theme-checkbox-container:hover:not(.is-disabled) .theme-checkbox-box {
+  border-color: var(--color-brand-base);
+  background-color: var(--color-brand-wash);
+}
+
+.theme-checkbox-input:focus-visible + .theme-checkbox-box {
+  outline: 2px solid var(--color-brand-base);
+  outline-offset: 2px;
+}
+
+.theme-checkbox-input:checked + .theme-checkbox-box {
+  background-color: var(--color-brand-base);
+  border-color: var(--color-brand-base);
+  box-shadow: var(--shadow-brand-sm);
+}
+
+.theme-checkbox-check {
+  width: 16px;
+  height: 16px;
+  stroke-dasharray: 22;
+  stroke-dashoffset: 22;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: stroke-dashoffset 0.2s ease-in-out, opacity 0.15s ease, transform 0.15s ease;
+}
+
+.theme-checkbox-input:checked + .theme-checkbox-box .theme-checkbox-check {
+  stroke-dashoffset: 0;
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Locked & Grayed Out Mode Rules */
+.theme-checkbox-container.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.theme-checkbox-container.is-disabled .theme-checkbox-box {
+  background-color: var(--color-bg-subtle);
+  border-color: var(--color-border-light);
+}
+
+.theme-checkbox-container.is-disabled * {
+  pointer-events: none;
+}
+
+/* Export Preview Box */
+.export-preview-box {
+  box-sizing: border-box;
+  width: 100%;
+  background-color: var(--color-bg-card-subtle);
+  border: 1px solid var(--color-border-main);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.export-preview-box__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.export-preview-box__code {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-brand-base);
+  word-break: break-all;
+  white-space: pre-wrap;
+}

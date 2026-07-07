@@ -1,8 +1,10 @@
 import React from 'react';
 import { ThemeSettingsPanel } from '../components/ui/ThemeSettingsPanel';
 import { GeneralSettingsPanel } from '../components/ui/GeneralSettingsPanel';
+import { ExportSettingsPanel } from '../components/ui/ExportSettingsPanel';
 
-export type SettingsCategoryId = 'general' | 'theme' | 'shortcuts';
+export type SettingsCategoryId = 'general' | 'theme' | 'shortcuts' | 'export';
+export type CopyFormat = 'css' | 'plaintext' | 'float' | 'space' | 'array';
 
 export interface SettingsCategory {
   id: SettingsCategoryId;
@@ -36,6 +38,14 @@ const PaletteIcon: React.FC = () => (
   </svg>
 );
 
+const ExportIcon: React.FC = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <polyline points="17 8 12 3 7 8" />
+    <line x1="12" y1="3" x2="12" y2="15" />
+  </svg>
+);
+
 export const SETTINGS_CATEGORIES: SettingsCategory[] = [
   {
     id: 'general',
@@ -48,5 +58,11 @@ export const SETTINGS_CATEGORIES: SettingsCategory[] = [
     label: 'Themes',
     icon: <PaletteIcon />,
     component: ThemeSettingsPanel,
+  },
+  {
+    id: 'export',
+    label: 'Export',
+    icon: <ExportIcon />,
+    component: ExportSettingsPanel,
   },
 ];

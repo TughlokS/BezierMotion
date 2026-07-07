@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usePlayground } from '../../context/PlaygroundContext';
+import { formatBezier } from '../../utils/formatBezier';
 
 // ─────────────────────────────────────────────
 //  EditableCurveValue – local state handler for inputs
@@ -56,7 +57,7 @@ const EditableCurveValue: React.FC<EditableCurveValueProps> = ({ val, index, isA
 // ─────────────────────────────────────────────
 
 const CurveValuesBar: React.FC = () => {
-  const { curveValues, setCurveValues, activeHandle, hoveredHandle } = usePlayground();
+  const { curveValues, setCurveValues, activeHandle, hoveredHandle, copyFormat, noSpaces } = usePlayground();
   const [copied, setCopied] = useState(false);
 
   const handleValueCommit = (index: number, rawVal: number) => {
@@ -78,8 +79,7 @@ const CurveValuesBar: React.FC = () => {
   };
 
   const handleCopy = useCallback(async () => {
-    const [x1, y1, x2, y2] = curveValues.map(v => parseFloat(v.toFixed(2)));
-    const text = `cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`;
+    const text = formatBezier(curveValues, copyFormat, noSpaces);
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -93,7 +93,7 @@ const CurveValuesBar: React.FC = () => {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }, [curveValues]);
+  }, [curveValues, copyFormat, noSpaces]);
 
   return (
     <div className="curve-values-bar" aria-label="Bezier curve values editor">
