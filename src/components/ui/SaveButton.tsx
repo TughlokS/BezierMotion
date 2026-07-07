@@ -17,17 +17,25 @@ const SaveIcon: React.FC = () => (
 );
 
 const SaveButton: React.FC = () => {
-  const { saveCustomPreset } = usePlayground();
+  const { presets, curveValues, saveCustomPreset } = usePlayground();
   const saveMorph = useMorphHover();
+
+  const isDuplicate = presets.some(p => 
+    Math.abs(p.bezierValue.cp1.X - curveValues[0]) < 1e-4 &&
+    Math.abs(p.bezierValue.cp1.Y - curveValues[1]) < 1e-4 &&
+    Math.abs(p.bezierValue.cp2.X - curveValues[2]) < 1e-4 &&
+    Math.abs(p.bezierValue.cp2.Y - curveValues[3]) < 1e-4
+  );
 
   return (
     <button
-      className={`save-preset-btn ${saveMorph.className}`}
-      onClick={saveCustomPreset}
+      className={`save-preset-btn ${isDuplicate ? 'save-preset-btn--disabled' : saveMorph.className}`}
+      onClick={isDuplicate ? undefined : saveCustomPreset}
+      disabled={isDuplicate}
       id="save-custom-preset"
-      aria-label="Save current curve as a preset"
-      title="Save as preset"
-      {...saveMorph.handlers}
+      aria-label={isDuplicate ? "Preset with these values already exists" : "Save current curve as a preset"}
+      title={isDuplicate ? "Preset with these values already exists" : "Save as preset"}
+      {...(isDuplicate ? {} : saveMorph.handlers)}
     >
       <SaveIcon />
     </button>

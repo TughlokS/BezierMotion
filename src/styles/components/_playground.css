@@ -368,6 +368,49 @@ body.is-dragging-handle * {
   z-index: 0;
 }
 
+/* Custom Presets Deletion Styles */
+.preset-item-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 2;
+}
+
+.preset-item-wrapper:hover {
+  z-index: 10;
+}
+
+.preset-item__delete-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background-color: var(--color-bg-base);
+  border: 1px solid var(--color-brand-base);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.preset-item-wrapper:hover .preset-item__delete-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.preset-item__delete-btn:hover {
+  background-color: color-mix(in srgb, var(--color-brand-base) 8%, var(--color-bg-base));
+  color: var(--color-brand-base);
+  transform: scale(1.1);
+}
+
 .preset-item {
   position: relative;
   z-index: 1; /* sit above the pill */
@@ -386,7 +429,7 @@ body.is-dragging-handle * {
   transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
 }
 
-.preset-item:hover:not(.preset-item--active) {
+.preset-item-wrapper:hover .preset-item:not(.preset-item--active) {
   border-color: var(--color-brand-base);
   background: var(--bg-overlay-subtle-hover);
 }
@@ -439,7 +482,7 @@ body.is-dragging-handle * {
   flex-shrink: 0;
 }
 
-.preset-item:hover .preset-item__name,
+.preset-item-wrapper:hover .preset-item__name,
 .preset-item--active .preset-item__name {
   transform: translateY(0);
 }
@@ -456,7 +499,7 @@ body.is-dragging-handle * {
   flex-shrink: 0;
 }
 
-.preset-item:hover .preset-item__values {
+.preset-item-wrapper:hover .preset-item__values {
   opacity: 0.6;
   transform: translateY(0);
 }
@@ -498,6 +541,19 @@ body.is-dragging-handle * {
 
 .save-preset-btn:active {
   box-shadow: var(--shadow-brand-sm);
+}
+
+.save-preset-btn--disabled {
+  background-color: var(--color-border-light) !important;
+  color: var(--color-text-muted) !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+.save-preset-btn--disabled::before {
+  background-color: transparent !important;
+  opacity: 0 !important;
 }
 
 /* ══════════════════════════════════════════

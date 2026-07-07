@@ -76,29 +76,49 @@ const PresetItemRow: React.FC<{
   preset: Preset;
   active: boolean;
   onSelect: () => void;
+  onDelete: (id: string) => void;
   itemRef: React.RefCallback<HTMLButtonElement>;
-}> = ({ preset, active, onSelect, itemRef }) => {
+}> = ({ preset, active, onSelect, onDelete, itemRef }) => {
   const { cp1, cp2 } = preset.bezierValue;
   const valStr = `${fmt(cp1.X)}, ${fmt(cp1.Y)}, ${fmt(cp2.X)}, ${fmt(cp2.Y)}`;
 
   return (
-    <button
-      ref={itemRef}
-      className={`preset-item ${active ? 'preset-item--active' : ''}`}
-      onClick={onSelect}
-    >
-      <MiniCurveIcon cp1={cp1} cp2={cp2} />
-      <span className="preset-item__text">
-        <span className="preset-item__name">{preset.title}</span>
-        <span className="preset-item__values">{valStr}</span>
-      </span>
-    </button>
+    <div className="preset-item-wrapper">
+      <button
+        ref={itemRef}
+        className={`preset-item ${active ? 'preset-item--active' : ''}`}
+        onClick={onSelect}
+      >
+        <MiniCurveIcon cp1={cp1} cp2={cp2} />
+        <span className="preset-item__text">
+          <span className="preset-item__name">{preset.title}</span>
+          <span className="preset-item__values">{valStr}</span>
+        </span>
+      </button>
+      {!preset.isLocked && (
+        <button
+          type="button"
+          className="preset-item__delete-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(preset.id);
+          }}
+          aria-label={`Delete preset ${preset.title}`}
+          title="Delete preset"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+        </button>
+      )}
+    </div>
   );
 };
 
 // ── Panel ──────────────────────────────────────
 const PresetsPanel: React.FC = () => {
-  const { presets, selectedPresetId, selectPreset } = usePlayground();
+  const { presets, selectedPresetId, selectPreset, deleteCustomPreset } = usePlayground();
 
   // Refs for the list container and each item button
   const listRef = useRef<HTMLDivElement>(null);
@@ -109,7 +129,10 @@ const PresetsPanel: React.FC = () => {
   const [pillReady, setPillReady] = useState(false);
 
   useEffect(() => {
-    if (!selectedPresetId) return;
+    if (!selectedPresetId) {
+      setPill(null);
+      return;
+    }
     const listEl = listRef.current;
     const itemEl = itemRefs.current.get(selectedPresetId);
     if (!listEl || !itemEl) return;
@@ -151,6 +174,7 @@ const PresetsPanel: React.FC = () => {
             preset={preset}
             active={selectedPresetId === preset.id}
             onSelect={() => selectPreset(preset.id)}
+            onDelete={deleteCustomPreset}
             itemRef={(el) => {
               if (el) itemRefs.current.set(preset.id, el);
               else itemRefs.current.delete(preset.id);

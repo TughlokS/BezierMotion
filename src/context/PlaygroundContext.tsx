@@ -49,6 +49,7 @@ interface PlaygroundState {
   selectPreset: (id: string) => void;
   saveCustomPreset: () => void;
   commitSavePreset: (name: string) => void;
+  deleteCustomPreset: (id: string) => void;
   panOffsetPx: number;
   setPanOffsetPx: (v: number) => void;
   panOffsetXPx: number;
@@ -284,11 +285,18 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setSaveModalOpen(false);
   };
 
+  const deleteCustomPreset = (id: string) => {
+    setCustomPresets(customPresets.filter(p => p.id !== id));
+    if (selectedPresetId === id) {
+      setSelectedPresetId(null);
+    }
+  };
+
   return (
     <PlaygroundContext.Provider value={{
       curveValues, setCurveValues,
       duration, setDuration,
-      presets, selectedPresetId, selectPreset, saveCustomPreset, commitSavePreset,
+      presets, selectedPresetId, selectPreset, saveCustomPreset, commitSavePreset, deleteCustomPreset,
       panOffsetPx, setPanOffsetPx,
       panOffsetXPx, setPanOffsetXPx,
       zoom, setZoom,
