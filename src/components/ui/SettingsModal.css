@@ -186,14 +186,18 @@
   flex-direction: column;
 }
 
+.theme-settings-panel__section:not(:first-child) {
+  margin-top: 24px;
+}
+
 .theme-settings-panel__section-header {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
+  margin: 0 0 8px 0;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--color-border-light);
 }
 
@@ -202,7 +206,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 0;
+  padding: 16px 0;
   border-bottom: 1px solid var(--color-border-light);
   gap: 32px;
 }

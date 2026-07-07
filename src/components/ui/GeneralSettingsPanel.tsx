@@ -1,25 +1,55 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { usePlayground } from '../../context/PlaygroundContext';
 import { SettingsRow } from './SettingsRow';
+import { formatBezier } from '../../utils/formatBezier';
+import type { CopyFormat } from '../../types/settings';
 
 const SNAP_STEPS = [0.5, 0.25, 0.1, 0.05, 0.025];
 
+const FORMAT_LABELS: Record<CopyFormat, string> = {
+  css: 'CSS',
+  plaintext: 'Plaintext',
+  float: 'Float',
+  space: 'Space-separated',
+  array: 'Array'
+};
+
 export const GeneralSettingsPanel: React.FC = () => {
-  const { snapStep, setSnapStep } = usePlayground();
+  const {
+    snapStep,
+    setSnapStep,
+    copyFormat,
+    setCopyFormat,
+    noSpaces,
+    setNoSpaces,
+    curveValues
+  } = usePlayground();
 
   const activeIndex = SNAP_STEPS.indexOf(snapStep) !== -1 ? SNAP_STEPS.indexOf(snapStep) : 2;
-  const [inputValue, setInputValue] = React.useState<number>(activeIndex * 25);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const [inputValue, setInputValue] = useState<number>(activeIndex * 25);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const trackRef = React.useRef<HTMLDivElement>(null);
-  const startXRef = React.useRef<number>(0);
-  const startValRef = React.useRef<number>(0);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef<number>(0);
+  const startValRef = useRef<number>(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isDragging) {
       setInputValue(activeIndex * 25);
     }
   }, [activeIndex, isDragging]);
+
+  useEffect(() => {
+    const clickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', clickOutside);
+    return () => document.removeEventListener('mousedown', clickOutside);
+  }, []);
 
   const handleThumbMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -124,6 +154,17 @@ export const GeneralSettingsPanel: React.FC = () => {
     setInputValue(nextIndex * 25);
   };
 
+  const handleListboxKeyDown = (e: React.KeyboardEvent, format: CopyFormat) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setCopyFormat(format);
+      setIsDropdownOpen(false);
+    }
+  };
+
+  const isSpaceFormat = copyFormat === 'space';
+  const previewText = formatBezier(curveValues, copyFormat, noSpaces);
+
   return (
     <div className="theme-settings-panel">
       <h1 className="theme-settings-panel__title">General Settings</h1>
@@ -134,7 +175,7 @@ export const GeneralSettingsPanel: React.FC = () => {
 
           <SettingsRow 
             title="Grid Snapping Steps" 
-            description="Choose at what intervals the control points snaps to grid"
+            description="Choose grid snapping intervals"
           >
             <div className={`slider-wrapper ${isDragging ? 'is-dragging' : ''}`}>
               <div 
@@ -180,6 +221,67 @@ export const GeneralSettingsPanel: React.FC = () => {
               </div>
             </div>
           </SettingsRow>
+        </div>
+
+        <div className="theme-settings-panel__section">
+          <h2 className="theme-settings-panel__section-header">Export</h2>
+
+          <SettingsRow title="Copy Format" description="Select the preferred layout schema of copied vectors.">
+            <div className="copy-format-dropdown" ref={dropdownRef}>
+              <button
+                type="button"
+                className="copy-format-dropdown__btn"
+                aria-haspopup="listbox"
+                aria-expanded={isDropdownOpen}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                {FORMAT_LABELS[copyFormat]}
+                <span className={`chevron-icon ${isDropdownOpen ? 'is-open' : ''}`}>▾</span>
+              </button>
+
+              {isDropdownOpen && (
+                <div className="copy-format-dropdown__popover" role="listbox">
+                  {(Object.keys(FORMAT_LABELS) as CopyFormat[]).map((format) => (
+                    <div
+                      key={format}
+                      role="option"
+                      tabIndex={0}
+                      aria-selected={copyFormat === format}
+                      className={`copy-format-dropdown__option ${copyFormat === format ? 'is-selected' : ''}`}
+                      onClick={() => { setCopyFormat(format); setIsDropdownOpen(false); }}
+                      onKeyDown={(e) => handleListboxKeyDown(e, format)}
+                    >
+                      {FORMAT_LABELS[format]}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </SettingsRow>
+
+          <SettingsRow title="No spaces between values" description="Remove spaces between values">
+            <label className={`theme-checkbox-container ${isSpaceFormat ? 'is-disabled' : ''}`}>
+              <input
+                type="checkbox"
+                className="theme-checkbox-input"
+                checked={isSpaceFormat ? false : noSpaces}
+                disabled={isSpaceFormat}
+                onChange={(e) => setNoSpaces(e.target.checked)}
+              />
+              <div className="theme-checkbox-box">
+                <svg className="theme-checkbox-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+            </label>
+          </SettingsRow>
+
+          <div className="export-preview-box">
+            <span className="export-preview-box__title">Preview</span>
+            <div className="export-preview-box__code">
+              {previewText}
+            </div>
+          </div>
         </div>
       </div>
     </div>
