@@ -88,6 +88,8 @@ interface PlaygroundState {
   setCopyFormat: (format: CopyFormat) => void;
   noSpaces: boolean;
   setNoSpaces: (noSpaces: boolean) => void;
+  customFields: { prefix: string; d1: string; d2: string; d3: string; suffix: string };
+  setCustomFields: (fields: { prefix: string; d1: string; d2: string; d3: string; suffix: string }) => void;
 }
 
 const PlaygroundContext = createContext<PlaygroundState | undefined>(undefined);
@@ -114,6 +116,25 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const setNoSpaces = (ns: boolean) => {
     setNoSpacesState(ns);
     localStorage.setItem('setting-no-spaces', String(ns));
+  };
+
+  const [customFields, setCustomFieldsState] = useState(() => {
+    try {
+      const stored = localStorage.getItem('setting-custom-fields');
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return {
+      prefix: '',
+      d1: '',
+      d2: '',
+      d3: '',
+      suffix: ''
+    };
+  });
+
+  const setCustomFields = (fields: typeof customFields) => {
+    setCustomFieldsState(fields);
+    localStorage.setItem('setting-custom-fields', JSON.stringify(fields));
   };
 
   const [themeMode, setThemeModeState] = useState<'light' | 'dark' | 'auto'>(() => {
@@ -353,6 +374,7 @@ export const PlaygroundProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       themeMode, isDarkResolved, setThemeMode,
       copyFormat, setCopyFormat,
       noSpaces, setNoSpaces,
+      customFields, setCustomFields,
     }}>
       {children}
     </PlaygroundContext.Provider>

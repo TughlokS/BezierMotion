@@ -57,7 +57,7 @@ const EditableCurveValue: React.FC<EditableCurveValueProps> = ({ val, index, isA
 // ─────────────────────────────────────────────
 
 const CurveValuesBar: React.FC = () => {
-  const { curveValues, setCurveValues, activeHandle, hoveredHandle, copyFormat, noSpaces } = usePlayground();
+  const { curveValues, setCurveValues, activeHandle, hoveredHandle, copyFormat, noSpaces, customFields } = usePlayground();
   const [copied, setCopied] = useState(false);
 
   const handleValueCommit = (index: number, rawVal: number) => {
@@ -79,7 +79,7 @@ const CurveValuesBar: React.FC = () => {
   };
 
   const handleCopy = useCallback(async () => {
-    const text = formatBezier(curveValues, copyFormat, noSpaces);
+    const text = formatBezier(curveValues, copyFormat, noSpaces, customFields);
     try {
       await navigator.clipboard.writeText(text);
     } catch {
@@ -93,7 +93,7 @@ const CurveValuesBar: React.FC = () => {
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  }, [curveValues, copyFormat, noSpaces]);
+  }, [curveValues, copyFormat, noSpaces, customFields]);
 
   return (
     <div className="curve-values-bar" aria-label="Bezier curve values editor">

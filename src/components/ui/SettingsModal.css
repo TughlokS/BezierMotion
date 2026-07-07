@@ -170,6 +170,7 @@
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 8px;
+  scrollbar-gutter: stable;
 }
 
 .theme-settings-panel__title {
@@ -738,26 +739,140 @@
   pointer-events: none;
 }
 
-/* Export Preview Box */
-.export-preview-box {
-  box-sizing: border-box;
-  width: 100%;
-  background-color: var(--color-bg-card-subtle);
-  border: 1px solid var(--color-border-main);
-  border-radius: 12px;
-  padding: 16px 20px;
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+/* Custom Option Modifiers in Popover */
+.copy-format-dropdown__separator {
+  height: 1px;
+  background-color: var(--color-border-light);
+  margin: 4px 0;
 }
 
-.export-preview-box__title {
+.copy-format-dropdown__option--custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.pencil-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-muted);
+}
+
+.copy-format-dropdown__option--custom:hover .pencil-icon,
+.copy-format-dropdown__option--custom.is-selected .pencil-icon {
+  color: inherit;
+}
+
+/* Preview Box Structural Engineering Rules */
+.preview-container-wrapper {
+  margin-top: 24px;
+  width: 100%;
+}
+
+.preview-label {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.custom-preview-box {
+  background-color: var(--color-bg-card-subtle);
+  border: 1px solid var(--color-border-main);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Active Highlight Theme Trigger Box */
+.preview-container-wrapper.is-editing .custom-preview-box {
+  border-color: var(--color-brand-base);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-base) 15%, transparent);
+  background-color: var(--color-bg-base);
+}
+
+/* Horizontal Segmented Layout Input Strip */
+.segmented-input-strip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.strip-input {
+  border: 1px solid var(--color-border-light);
+  background-color: var(--color-bg-subtle);
+  color: var(--color-text-main);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-width: 32px;
+  flex: 1;
+  text-align: center;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.strip-input:focus {
+  border-color: var(--color-brand-base);
+  background-color: color-mix(in srgb, var(--color-brand-base) 6%, var(--color-bg-base));
+}
+
+.strip-input.prefix {
+  flex: 2;
+  text-align: right;
+}
+
+.strip-input.suffix {
+  flex: 2;
+  text-align: left;
+}
+
+.coord-token {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-brand-base);
+  padding: 0 2px;
+  user-select: none;
+}
+
+/* Confirmation Buttons */
+.custom-done-btn {
+  padding: 6px 12px;
+  background-color: var(--color-brand-base);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.custom-done-btn:hover {
+  background-color: var(--color-brand-hover);
+}
+
+.custom-done-btn:active {
+  transform: scale(0.96);
+}
+
+.static-preview-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 .export-preview-box__code {
@@ -768,4 +883,26 @@
   color: var(--color-brand-base);
   word-break: break-all;
   white-space: pre-wrap;
+}
+
+.inline-edit-trigger {
+  background: none;
+  border: none;
+  color: var(--color-brand-base);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: var(--color-brand-wash);
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.inline-edit-trigger:hover {
+  background-color: color-mix(in srgb, var(--color-brand-base) 15%, transparent);
+}
+
+.inline-edit-trigger:active {
+  transform: scale(0.96);
 }

@@ -7,7 +7,8 @@ import type { CopyFormat } from '../types/settings';
 export const formatBezier = (
   values: [number, number, number, number],
   format: CopyFormat,
-  noSpaces: boolean
+  noSpaces: boolean,
+  customFields?: { prefix: string; d1: string; d2: string; d3: string; suffix: string }
 ): string => {
   // Precision string serialization stripping trailing fraction zeros via unary plus
   const coords = values.map(v => (+v.toFixed(2)).toString());
@@ -27,6 +28,11 @@ export const formatBezier = (
       return coords.join(' ');
     case 'array':
       return `[${coords.join(`,${spacer}`)}]`;
+    case 'custom':
+      if (customFields) {
+        return `${customFields.prefix}${coords[0]}${customFields.d1}${coords[1]}${customFields.d2}${coords[2]}${customFields.d3}${coords[3]}${customFields.suffix}`;
+      }
+      return `cubic-bezier(${coords.join(`,${spacer}`)})`;
     default:
       return `cubic-bezier(${coords.join(`,${spacer}`)})`;
   }

@@ -3,7 +3,7 @@ import { ThemeSettingsPanel } from '../components/ui/ThemeSettingsPanel';
 import { GeneralSettingsPanel } from '../components/ui/GeneralSettingsPanel';
 
 export type SettingsCategoryId = 'general' | 'theme' | 'shortcuts';
-export type CopyFormat = 'css' | 'plaintext' | 'float' | 'space' | 'array';
+export type CopyFormat = 'css' | 'plaintext' | 'float' | 'space' | 'array' | 'custom';
 
 export interface SettingsCategory {
   id: SettingsCategoryId;
